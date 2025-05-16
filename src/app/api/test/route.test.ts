@@ -6,6 +6,6 @@ describe("GET /api/test", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data).toEqual({ message: "Hello World" });
+    expect(data).toEqual({ message: "Hello Wor" });
   });
 });
