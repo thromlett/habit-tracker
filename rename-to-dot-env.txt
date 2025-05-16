@@ -1,0 +1,3 @@
+#This is the boilerplate .env file. You need to copy this and name it as .env
+
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
