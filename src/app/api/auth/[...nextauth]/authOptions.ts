@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "../../../../../lib/prisma";
+import bcrypt from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -15,12 +16,16 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.user.findUnique({
           where: { email: credentials?.email },
         });
-        // Add your own password check!
-        if (user && credentials?.password === user.password) {
-          // Don't include password in returned object!
-          return { id: user.id, email: user.email };
-        }
-        return null;
+        if (!user) return null;
+        const isValidPassword = await bcrypt.compare(
+          credentials?.password || "",
+          user.password
+        );
+        if (!isValidPassword) return null;
+        return {
+          id: user.id,
+          email: user.email,
+        };
       },
     }),
     // You can add Google, GitHub, etc. here
@@ -28,5 +33,5 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt", // Or 'database' if you want sessions in MongoDB
   },
-  secret: process.env.NEXTAUTH_SECRET, // Set in your .env!
+  secret: process.env.NEXTAUTH_SECRET,
 };
