@@ -18,7 +18,7 @@ describe("NextAuth", () => {
     const password = "password123";
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    prisma.user.findUnique.mockResolvedValue({
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue({
       id: "user-id",
       email,
       password: hashedPassword,
@@ -34,7 +34,7 @@ describe("NextAuth", () => {
   });
 
   it("returns null on invalid credentials", async () => {
-    prisma.user.findUnique.mockResolvedValue(null);
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
     const credentials = { email: "none@email.com", password: "wrongpassword" };
     const user = await authorize(credentials);
     expect(user).toBeNull();
@@ -45,7 +45,7 @@ describe("NextAuth", () => {
     const password = "wrongpassword";
     const hashedPassword = await bcrypt.hash("password123", 10);
 
-    prisma.user.findUnique.mockResolvedValue({
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue({
       id: "user-id",
       email,
       password: hashedPassword,
