@@ -23,6 +23,7 @@ const authorizeEmail  = async (credentials: Credentials | undefined) => {
     return {
         id: user.id,
         email: user.email,
+        role: user.role,
     };
 };
 
@@ -46,5 +47,21 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt", // Or 'database' if you want sessions in MongoDB
     },
+
+    callbacks: {
+  async jwt({ token, user }) {
+    if (user) {
+      token.role = user.role; // Include role in JWT
+    }
+    return token;
+  },
+  async session({ session, token }) {
+    if (session.user && token.role) {
+      session.user.role = token.role; // Pass role to session.user
+    }
+    return session;
+  },
+},
+
     secret: process.env.NEXTAUTH_SECRET,
 };

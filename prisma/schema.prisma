@@ -13,17 +13,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Book {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  title   String
-  author  String
-  pages   Int
-  genres  String[]
-  rating  Float?
+enum Role {
+  USER
+  PAID_USER
+  ADMIN
 }
+
+model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String 
+  token      String   @unique
+  expires    DateTime
+}
+
+model PasswordResetToken {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  identifier  String
+  token       String  @unique
+  expires     DateTime
+}
+
 
 model User {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
   email    String   @unique
   password String
+  role     Role     @default(USER)
+  emailVerified DateTime?
+  createdAt     DateTime?
+  lastLogin     DateTime?
 }
