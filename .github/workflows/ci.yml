@@ -16,10 +16,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.15.1' # or whatever your project uses
+          node-version: "22.15.1" # or whatever your project uses
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run unit tests
         run: npm test # or npm run test if that's your script
+        env:
+          POSTMARK_API_TOKEN: ${{ secrets.POSTMARK_API_TOKEN }}

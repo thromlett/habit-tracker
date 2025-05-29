@@ -40,6 +40,37 @@ model User {
   password String
   role     Role     @default(USER)
   emailVerified DateTime?
-  createdAt     DateTime?
+  createdAt     DateTime
   lastLogin     DateTime?
+}
+
+model Habit {
+  disposition        Disposition
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  user   User     @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime
+  startDate   DateTime
+  endDate DateTime?
+
+  //Good Habit Only
+
+  //Bad Habit Only
+
+}
+
+model HabitLog {
+  id      String   @id @default(auto()) @map("_id")
+  habit   Habit    @relation(fields: [habitId], references: [id])
+  habitId String
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+  date    DateTime
+}
+
+enum Disposition{
+  Good
+  Bad
 }
