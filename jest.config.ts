@@ -1,11 +1,7 @@
 import type { Config } from "jest";
 
 const config: Config = {
-  testMatch: [
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/*.supertest.ts",
-  ],
+  testMatch: ["**/*.test.ts", "**/*.spec.ts", "**/*.supertest.ts"],
   preset: "ts-jest",
   testEnvironment: "node",
   transform: {
@@ -15,6 +11,7 @@ const config: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+  setupFiles: ["<rootDir>/.jest/setEnvVars.ts"],
 };
 
 export default config;

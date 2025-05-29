@@ -4,64 +4,63 @@ import { prisma } from "../../../../../lib/prisma";
 import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
 
-
 type Credentials = { email?: string; password?: string };
 
-const authorizeEmail  = async (credentials: Credentials | undefined) => {
-    if(!credentials) return null;
-        
-    const user = await prisma.user.findUnique({
-        where: { email: credentials.email },
-    });
+const authorizeEmail = async (credentials: Credentials | undefined) => {
+  if (!credentials) return null;
 
-    if (!user) return null;
-    const isValidPassword = await bcrypt.compare(
-        credentials?.password || "",
-        user.password
-    );
-    if (!isValidPassword) return null;
-    return {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-    };
+  const user = await prisma.user.findUnique({
+    where: { email: credentials.email },
+  });
+
+  if (!user) return null;
+  const isValidPassword = await bcrypt.compare(
+    credentials?.password || "",
+    user.password
+  );
+  if (!isValidPassword) return null;
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
 };
 
 const emailAuthorizationProvider = CredentialsProvider({
-    name: "Credentials",
-    credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-    },
-    authorize: authorizeEmail
+  name: "Credentials",
+  credentials: {
+    email: { label: "Email", type: "email" },
+    password: { label: "Password", type: "password" },
+  },
+  authorize: authorizeEmail,
 });
 
 export const authOptions: NextAuthOptions = {
-    providers: [
-        emailAuthorizationProvider,
-        GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_SECRET!,
-    })
-    ],
-    session: {
-        strategy: "jwt", // Or 'database' if you want sessions in MongoDB
+  providers: [
+    emailAuthorizationProvider,
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_SECRET!,
+    }),
+  ],
+  session: {
+    strategy: "jwt", // Or 'database' if you want sessions in MongoDB
+  },
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role; // Include role in JWT
+      }
+      return token;
     },
-
-    callbacks: {
-  async jwt({ token, user }) {
-    if (user) {
-      token.role = user.role; // Include role in JWT
-    }
-    return token;
+    async session({ session, token }) {
+      if (session.user && token.role) {
+        session.user.role = token.role; // Pass role to session.user
+      }
+      return session;
+    },
   },
-  async session({ session, token }) {
-    if (session.user && token.role) {
-      session.user.role = token.role; // Pass role to session.user
-    }
-    return session;
-  },
-},
 
-    secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 };

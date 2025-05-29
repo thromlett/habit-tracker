@@ -1,15 +1,14 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import { redirect } from "next/navigation";
+import HomeClient from "./components/HomeClient";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
 
-  if (!session){
-    redirect("/api/auth/signin");
+  if (!session) {
+    redirect("/login");
   }
 
-  return ( 
-    <a href="/test-runner">She h on my ref til I page.tsx now im package.json</a>
-  )
+  return <HomeClient user={session.user} />;
 }

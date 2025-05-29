@@ -3,19 +3,26 @@
 import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple, FaFacebookF } from "react-icons/fa";
 
 export default function SignUpPage() {
-  const [form, setForm] = useState({ email: "", password: "", confirm: "", role: "USER" });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    confirm: "",
+    role: "USER",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,12 +42,18 @@ export default function SignUpPage() {
     const res = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: form.email, password: form.password, role: form.role }),
+      body: JSON.stringify({
+        email: form.email,
+        password: form.password,
+        role: form.role,
+      }),
     });
     const data = await res.json();
 
     if (res.ok) {
-      setSuccess("Registration successful! Please check your email to verify your account.");
+      setSuccess(
+        "Registration successful! Please check your email to verify your account."
+      );
       setForm({ email: "", password: "", confirm: "", role: "USER" });
       // Optionally auto-login after sign up:
       // await signIn("credentials", { email: form.email, password: form.password, redirect: false });
@@ -59,10 +72,20 @@ export default function SignUpPage() {
         </div>
         {/* Welcome Message */}
         <h2 className="text-3xl font-bold text-center mb-1">Create Account</h2>
-        <p className="text-center text-gray-500 mb-6">Sign up to get started.</p>
+        <p className="text-center text-gray-500 mb-6">
+          Sign up to get started.
+        </p>
         {/* Error or Success message */}
-        {error && <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-4 text-center">{error}</div>}
-        {success && <div className="bg-green-100 text-green-700 px-3 py-2 rounded mb-4 text-center">{success}</div>}
+        {error && (
+          <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-4 text-center">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="bg-green-100 text-green-700 px-3 py-2 rounded mb-4 text-center">
+            {success}
+          </div>
+        )}
         {/* Form */}
         <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Email */}
@@ -106,7 +129,7 @@ export default function SignUpPage() {
                 type="button"
                 tabIndex={-1}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-600 text-sm font-medium"
-                onClick={() => setShowPassword(s => !s)}
+                onClick={() => setShowPassword((s) => !s)}
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
@@ -132,7 +155,7 @@ export default function SignUpPage() {
                 type="button"
                 tabIndex={-1}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-600 text-sm font-medium"
-                onClick={() => setShowConfirm(s => !s)}
+                onClick={() => setShowConfirm((s) => !s)}
               >
                 {showConfirm ? "Hide" : "Show"}
               </button>
@@ -196,7 +219,10 @@ export default function SignUpPage() {
         {/* Already have account */}
         <p className="text-center text-gray-500">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-600 font-medium hover:underline">
+          <Link
+            href="/login"
+            className="text-blue-600 font-medium hover:underline"
+          >
             Login
           </Link>
         </p>

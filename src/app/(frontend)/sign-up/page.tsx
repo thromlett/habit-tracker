@@ -1,4 +1,6 @@
 "use client";
+//This signup page is purely for testing purposes
+
 import { useState } from "react";
 import Link from "next/link";
 
