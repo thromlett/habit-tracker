@@ -1,16 +1,17 @@
 import type { Config } from "jest";
 
 const config: Config = {
+  testMatch: ["**/*.test.ts", "**/*.spec.ts", "**/*.supertest.ts"],
   preset: "ts-jest",
   testEnvironment: "node",
   transform: {
     "^.+\\.(ts|tsx)$": ["ts-jest", { useESM: false }],
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
-  testMatch: ["**/?(*.)+(test).ts?(x)"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
+  setupFiles: ["<rootDir>/.jest/setEnvVars.ts"],
 };
 
 export default config;
