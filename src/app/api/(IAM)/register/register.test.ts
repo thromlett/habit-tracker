@@ -1,6 +1,6 @@
 import { POST } from "./route";
-import { prisma } from "../../../../lib/prisma";
-import * as emailModule from "../../../../lib/email";
+import { prisma } from "../../../../../lib/prisma";
+import * as emailModule from "../../../../../lib/email";
 import bcrypt from "bcryptjs";
 import { NextRequest } from "next/server";
 

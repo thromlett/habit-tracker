@@ -20,7 +20,7 @@ enum Role {
 }
 
 model VerificationToken {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId 
   identifier String 
   token      String   @unique
   expires    DateTime
@@ -42,4 +42,42 @@ model User {
   emailVerified DateTime?
   createdAt     DateTime
   lastLogin     DateTime?
+
+  //relations
+  habits Habit[]
+}
+
+model Habit {
+  disposition        Disposition
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String?
+  user   User     @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt   DateTime
+  startDate   DateTime
+  endDate DateTime?
+
+  nagAt DateTime[]
+  nagMessage String
+  //Good Habit Only
+
+  //Bad Habit Only
+
+  //relations
+  logs HabitLog[]
+}
+
+model HabitLog {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  habit   Habit    @relation(fields: [habitId], references: [id])
+  habitId String
+
+  timeStamp  DateTime
+}
+
+enum Disposition{
+  Good
+  Bad
 }

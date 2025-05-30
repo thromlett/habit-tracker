@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+/* import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "../../../../lib/email";
@@ -68,13 +68,13 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+} */
 
-/* import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "../../../../../lib/prisma";
 import bcrypt from "bcryptjs";
-import { sendVerificationEmail } from "../../../../lib/email";
-import { nanoid } from "nanoid/non-secure"; //change to 'nanoid' for production use
+import { sendVerificationEmail } from "../../../../../lib/email";
+import { nanoid } from "nanoid";
 
 export async function POST(req: NextRequest) {
   try {
@@ -123,4 +123,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-} */
+}
