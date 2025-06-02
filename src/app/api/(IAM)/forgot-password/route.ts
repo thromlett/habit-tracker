@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
-import { sendPasswordResetEmail } from "../../../../lib/email";
+import { prisma } from "../../../../../lib/prisma";
+import { sendPasswordResetEmail } from "../../../../../lib/email";
 import { nanoid } from "nanoid";
 
 export async function POST(req: NextRequest) {
@@ -9,7 +9,10 @@ export async function POST(req: NextRequest) {
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return NextResponse.json({ message: "If that email is registered, you will receive a password reset email." });
+      return NextResponse.json({
+        message:
+          "If that email is registered, you will receive a password reset email.",
+      });
     }
 
     // Generate token and expiry
@@ -21,16 +24,21 @@ export async function POST(req: NextRequest) {
         identifier: email,
         token,
         expires,
-      }
+      },
     });
 
     const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`;
     await sendPasswordResetEmail({ to: email, resetUrl });
 
-    return NextResponse.json({ message: "If that email is registered, you will receive a password reset email." });
-
+    return NextResponse.json({
+      message:
+        "If that email is registered, you will receive a password reset email.",
+    });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Error handling forgot password." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error handling forgot password." },
+      { status: 500 }
+    );
   }
 }
