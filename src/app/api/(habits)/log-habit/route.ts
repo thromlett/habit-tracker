@@ -5,8 +5,15 @@ type HabitSchedule =
   | { type: "daysOfWeek"; days: string[] }
   | { type: "timesPerWeek"; count: number }
   | { type: "customDates"; dates: string[] }
-  | { type: "interval"; intervalDays: number; startDate: string }
+  | { type: "interval"; intervalDays: number }
   | null;
+
+function getStartOfWeek(date = new Date()) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - d.getDay());
+  return d;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,16 +39,56 @@ export async function POST(req: NextRequest) {
 
     const schedule = habit.schedule as HabitSchedule;
 
+    //
+    const startOfWeek = getStartOfWeek();
+    const oldestLogThisWeek = await prisma.habitLog.findFirst({
+      where: {
+        habitId,
+        timeStamp: { gte: startOfWeek },
+      },
+      orderBy: { timeStamp: "asc" },
+    });
+
+    let logsAfter = 0;
+    if (oldestLogThisWeek) {
+      logsAfter = await prisma.habitLog.count({
+        where: {
+          habitId,
+          timeStamp: { gt: oldestLogThisWeek.timeStamp },
+        },
+      });
+    }
+
+    console.log("Most recent log since Sunday:", oldestLogThisWeek);
+    console.log("Number of logs after that:", logsAfter);
+
+    const mostRecentLog = await prisma.habitLog.findFirst({
+      where: { habitId: habitId },
+      orderBy: { timeStamp: "desc" },
+    });
+
+    //
+
     const canTrackToday = (() => {
       if (!schedule) return true;
       switch (schedule.type) {
         case "daysOfWeek":
           return schedule.days.includes(todayEnum);
         case "timesPerWeek":
-          return true;
+          return logsAfter <= schedule.count;
         case "customDates":
-          return true;
+          // Assumes dates are in YYYY-MM-DD format
+          const todayStr = today.toISOString().split("T")[0];
+          return schedule.dates.includes(todayStr);
         case "interval":
+          if (mostRecentLog) {
+            const lastLogTime = new Date(mostRecentLog.timeStamp).getTime();
+            const now = Date.now();
+            return (
+              Math.floor((now - lastLogTime) / (1000 * 60 * 60 * 24)) > //multiplication converts to days
+              schedule.intervalDays
+            );
+          }
           return true;
         default:
           return true;
