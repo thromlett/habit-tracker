@@ -2,11 +2,14 @@ jest.mock("../../../../../lib/prisma", () => ({
   prisma: {
     habit: {
       findUnique: jest.fn(),
+      includes: jest.fn(),
     },
     habitLog: {
       findFirst: jest.fn(),
       count: jest.fn(),
       create: jest.fn(),
+      findMany: jest.fn(),
+      includes: jest.fn(),
     },
   },
 }));

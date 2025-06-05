@@ -1,4 +1,3 @@
-// Place mocks *before* imports!
 jest.mock("../../../../../lib/prisma", () => ({
   prisma: {
     habit: {
