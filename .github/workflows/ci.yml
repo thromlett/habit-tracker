@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         node-version: [22.15.1] # or any other versions you want to test against
-        mongodb-version: ["6.0", "7.0", "8.0"] # or any other versions you want to test against
+        mongodb-version: ["6.0", "7.0", "8.0"] # or any other version you want to test against
 
     steps:
       - name: Checkout code
