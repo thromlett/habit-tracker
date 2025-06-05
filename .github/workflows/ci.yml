@@ -8,6 +8,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.15.1] # or any other versions you want to test against
+        mongodb-version: ["6.0", "7.0", "8.0"] # or any other version you want to test against
 
     steps:
       - name: Checkout code
@@ -16,10 +20,22 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.15.1' # or whatever your project uses
+          node-version: ${{ matrix.node-version }}
+
+      - name: Set up MongoDB
+        uses: supercharge/mongodb-github-action@1.12.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+          mongodb-replica-set: habit-tracker-test
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate Prisma Schema
+        run: npx prisma generate
+
       - name: Run unit tests
         run: npm test # or npm run test if that's your script
+        env:
+          POSTMARK_API_TOKEN: ${{ secrets.POSTMARK_API_TOKEN }}
+          DATABASE_URL: "mongodb://localhost:27017/habit-tracker-test"
