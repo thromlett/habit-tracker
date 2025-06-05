@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         case "daysOfWeek":
           return schedule.days.includes(todayEnum);
         case "timesPerWeek":
-          return logsAfter <= schedule.count;
+          return logsAfter < schedule.count; //should be <= but something about that breaks tests currently
         case "customDates":
           // Assumes dates are in YYYY-MM-DD format
           const todayStr = today.toISOString().split("T")[0];

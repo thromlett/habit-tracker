@@ -4,7 +4,7 @@ import * as emailModule from "../../../../../lib/email";
 import bcrypt from "bcryptjs";
 import { NextRequest } from "next/server";
 
-jest.mock("../../../../lib/email");
+jest.mock("../../../../../lib/email");
 
 describe("POST /api/register", () => {
   beforeEach(async () => {

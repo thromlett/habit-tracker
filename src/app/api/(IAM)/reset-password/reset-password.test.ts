@@ -1,4 +1,4 @@
-jest.mock("../../../../lib/prisma", () => ({
+jest.mock("../../../../../lib/prisma", () => ({
   prisma: {
     passwordResetToken: {
       findUnique: jest.fn(),

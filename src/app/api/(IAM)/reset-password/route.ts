@@ -30,20 +30,33 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update the user's password
-    await prisma.user.update({
-      where: { email: resetToken.identifier },
-      data: { password: hashedPassword },
-    });
+    try {
+      await prisma.user.update({
+        where: { email: resetToken.identifier },
+        data: { password: hashedPassword },
+      });
+    } catch (updateError) {
+      console.error("Failed to update user password:", updateError);
+      return NextResponse.json(
+        { error: "Failed to update user password" },
+        { status: 500 }
+      );
+    }
 
     // Delete the reset token
-    await prisma.passwordResetToken.delete({ where: { token } });
+    try {
+      await prisma.passwordResetToken.delete({ where: { token } });
+    } catch (deleteError) {
+      console.error("Failed to delete reset token:", deleteError);
+      // Not a critical error, so continue
+    }
 
     return NextResponse.json(
       { message: "Password reset successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error(error);
+    console.error("General error in reset-password route:", error);
     return NextResponse.json(
       { error: "Failed to reset password" },
       { status: 500 }

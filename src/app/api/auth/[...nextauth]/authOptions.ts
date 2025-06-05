@@ -51,12 +51,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role; // Include role in JWT
+        token.id = user.id; //include id in JWT
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.role) {
+      if (session.user && token.role && token?.id) {
         session.user.role = token.role; // Pass role to session.user
+        session.user.id = token.id as string;
       }
       return session;
     },
