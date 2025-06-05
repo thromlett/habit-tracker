@@ -15,6 +15,8 @@ jobs:
         ports:
           - 27017:27017
         options: >-
+          --replSet rs0
+          --bind_ip localhost
           --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
           --health-interval 10s
           --health-timeout 5s
@@ -27,7 +29,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22.15.1" # or whatever your project uses
+          node-version: "22.15.1"
+
+      - name: Wait for MongoDB & initiate replica set
+        run: |
+          sleep 10
+          mongosh --host localhost:27017 --eval 'rs.initiate({_id: "rs0", members: [{_id: 0, host: "localhost:27017"}]})'
+          sleep 5
 
       - name: Install dependencies
         run: npm ci
@@ -36,7 +44,7 @@ jobs:
         run: npx prisma generate
 
       - name: Run unit tests
-        run: npm test # or npm run test if that's your script
+        run: npm test
         env:
           POSTMARK_API_TOKEN: ${{ secrets.POSTMARK_API_TOKEN }}
-          DATABASE_URL: mongodb://localhost:27017/testdb
+          DATABASE_URL: mongodb://localhost:27017/testdb?replicaSet=rs0
