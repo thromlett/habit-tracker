@@ -28,11 +28,9 @@ export default function HomeClient({ user }: HomeClientProps) {
 
 //
 //Finish Habit Frontend
-//Finish Habit tests
-//Finish Backlog of tests
-//Fix github actions
-////
+//
 //basic scaffold for front end
 //closing
 //antipatterns
 //
+//better verification page
