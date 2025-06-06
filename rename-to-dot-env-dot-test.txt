@@ -4,7 +4,7 @@
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 NEXTAUTH_URL=http://localhost:3000
 
-MONGO_URI = "mongodb+srv://Daniel:xDsDRmcjK2GrK2ud@cluster0.j0ju2tt.mongodb.net/habit-tracker?retryWrites=true&w=majority&appName=Cluster0"
+MONGO_URI = "mongodb+srv://danieltthornley:qVi5T7r6KqMZPE0P@habit-tracker.2txt7zn.mongodb.net/?retryWrites=true&w=majority&appName=habit-tracker"
 
 # This was inserted by `prisma init`:
 # Environment variables declared in this file are automatically made available to Prisma.
@@ -13,7 +13,7 @@ MONGO_URI = "mongodb+srv://Daniel:xDsDRmcjK2GrK2ud@cluster0.j0ju2tt.mongodb.net/
 # Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
 # See the documentation for all the connection string options: https://pris.ly/d/connection-strings
 
-DATABASE_URL="mongodb+srv://Daniel:xDsDRmcjK2GrK2ud@cluster0.j0ju2tt.mongodb.net/habit-tracker?retryWrites=true&w=majority&appName=Cluster0"
+DATABASE_URL="mongodb://localhost:27017/habit-tracker-test"
 
 
 #To generate a secret, run the following command in your terminal:
@@ -25,4 +25,4 @@ GOOGLE_CLIENT_ID=  963259792625-o92too7b8q97k6f7b4obgucq7laab16d.apps.googleuser
 GOOGLE_SECRET=  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
 
 POSTMARK_API_TOKEN=5aa9b4ce-498a-4b2c-b9ee-fe555b2de3d0
-POSTMARK_FROM_EMAIL= daniel.thornley@cirruscommercellc.com
+POSTMARK_FROM_EMAIL=daniel.thornley@cirruscommercellc.com
