@@ -61,12 +61,6 @@ model Habit {
   startDate   DateTime?
   endDate DateTime?
 
-//  nagAt DateTime[]
-//  nagMessage String
-  //Good Habit Only
-
-  //Bad Habit Only
-
   //relations
   logs HabitLog[]
 }
