@@ -1,4 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { prisma } from "../../../../../lib/prisma";
 
 type HabitSchedule =
@@ -114,4 +116,26 @@ export async function POST(req: NextRequest) {
     console.error(error);
     return NextResponse.json({ error: "Failed to log habit" }, { status: 500 });
   }
+}
+
+export async function GET() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+  const userId = session.user?.id;
+  if (!userId) {
+    return NextResponse.json({ error: "No user ID" }, { status: 400 });
+  }
+
+  const logs = await prisma.habitLog.findMany({
+    where: {
+      habit: { userId }, //relation filter
+    },
+    include: { habit: true }, //include habit details
+    orderBy: { timeStamp: "desc" }, //newest first
+  });
+
+  return NextResponse.json(logs);
 }
