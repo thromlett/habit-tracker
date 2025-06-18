@@ -27,7 +27,6 @@ export default function HomeClient({ user }: HomeClientProps) {
 }
 
 //Finish Habit Frontend
-//
 //basic scaffold for front end
 //closing
 //antipatterns
