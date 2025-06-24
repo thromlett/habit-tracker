@@ -3,15 +3,46 @@ import { prisma } from "../../../../lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { getServerSession } from "next-auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // Authenticate user
   const session = await getServerSession(authOptions);
-
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
   const userId = session.user?.id;
+  if (!userId) {
+    return NextResponse.json({ error: "No user ID" }, { status: 400 });
+  }
+
+  // Fetch all habits for this user
   const habits = await prisma.habit.findMany({ where: { userId } });
-  return NextResponse.json(habits);
+
+  // Build URL for log verification
+  const origin = new URL(req.url).origin;
+  const logUrlBase = `${origin}/api/habit/log`;
+
+  const loggableHabits = [];
+
+  for (const habit of habits) {
+    // Prepare verifyOnly request
+    const url = new URL(logUrlBase);
+    url.searchParams.set("verifyOnly", "true");
+    url.searchParams.set("habitId", habit.id);
+
+    // Call the log endpoint with session cookies
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      headers: { cookie: req.headers.get("cookie") || "" },
+    });
+    if (!res.ok) continue;
+
+    const { canTrack } = await res.json();
+    if (canTrack) {
+      loggableHabits.push(habit);
+    }
+  }
+
+  return NextResponse.json(loggableHabits);
 }
 
 export async function POST(req: NextRequest) {
