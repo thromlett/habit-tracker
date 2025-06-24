@@ -1,31 +1,21 @@
+//DELETE LATER
 "use client";
+import { useEffect, useState } from "react";
+import BottomBar from "../../components/BottomBar";
 
-import React, { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import BottomBar from "../../../components/BottomBar";
-
-// Types for your habits and logs
-interface Habit {
+type Habit = {
   id: string;
   name: string;
   description?: string;
-}
+};
 
-interface HabitLog {
+type HabitLog = {
   id: string;
   habitId: string;
   completed: boolean;
   timeStamp: string;
-}
+};
 
-// Fetcher functions
-const fetchHabits = (): Promise<Habit[]> =>
-  fetch("/api/habit").then((res) => res.json());
-
-const fetchLogs = (): Promise<HabitLog[]> =>
-  fetch("/api/habit/log").then((res) => res.json());
-
-// Utility to compare dates
 function isSameDay(a: string | Date, b: string | Date) {
   const da = new Date(a);
   const db = new Date(b);
@@ -37,30 +27,29 @@ function isSameDay(a: string | Date, b: string | Date) {
 }
 
 export default function DashboardPage() {
-  const queryClient = useQueryClient();
-
-  // Queries for habits and logs
-  const {
-    data: habits = [],
-    isLoading: habitsLoading,
-    error: habitsError,
-  } = useQuery({
-    queryKey: ["habit"],
-    queryFn: fetchHabits,
-  });
-
-  const {
-    data: logs = [],
-    isLoading: logsLoading,
-    error: logsError,
-  } = useQuery({
-    queryKey: ["logs"],
-    queryFn: fetchLogs,
-  });
-
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [logs, setLogs] = useState<HabitLog[]>([]);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState<string | null>(null);
 
-  // Find today's log for a habit
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      fetch("/api/habit").then((res) => res.json()),
+      fetch("/api/habit/log").then((res) => res.json()),
+    ])
+      .then(([habitsData, logsData]) => {
+        if (Array.isArray(habitsData) && Array.isArray(logsData)) {
+          setHabits(habitsData);
+          setLogs(logsData);
+        } else {
+          setHabits([]);
+          setLogs([]);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   function getTodaysLog(habitId: string) {
     const today = new Date();
     return logs.find(
@@ -68,7 +57,6 @@ export default function DashboardPage() {
     );
   }
 
-  // Handle logging a habit
   async function handleLog(habitId: string, completed: boolean) {
     setSubmitting(habitId);
     const res = await fetch("/api/habit/log", {
@@ -78,11 +66,10 @@ export default function DashboardPage() {
     });
     const data = await res.json();
     if (res.ok) {
-      // Update React Query cache without refetch
-      queryClient.setQueryData<HabitLog[]>(["logs"], (old = []) => [
-        ...old,
+      setLogs((logs) => [
+        ...logs,
         {
-          id: data.id,
+          ...data,
           habitId,
           completed,
           timeStamp: data.timeStamp || new Date().toISOString(),
@@ -94,7 +81,7 @@ export default function DashboardPage() {
     setSubmitting(null);
   }
 
-  // SVG Icons
+  // SVG ICONS
   const CheckIcon = (
     <svg viewBox="0 0 20 20" fill="none" width={28} height={28}>
       <circle cx="10" cy="10" r="10" fill="currentColor" opacity="0.05" />
@@ -107,7 +94,6 @@ export default function DashboardPage() {
       />
     </svg>
   );
-
   const XIcon = (
     <svg viewBox="0 0 20 20" fill="none" width={28} height={28}>
       <circle cx="10" cy="10" r="10" fill="currentColor" opacity="0.05" />
@@ -124,21 +110,10 @@ export default function DashboardPage() {
     <div className="pb-20 min-h-screen bg-gray-50">
       <main className="max-w-md mx-auto pt-8 px-4">
         <h1 className="text-2xl font-bold mb-4">Your Habits</h1>
-
-        {/* Loading & Error States */}
-        {(habitsLoading || logsLoading) && <p>Loading…</p>}
-        {(habitsError || logsError) && (
-          <p className="text-red-500">
-            Failed to load habits. Try again later.
-          </p>
-        )}
-
-        {/* No Habits */}
-        {!habitsLoading && habits.length === 0 && (
+        {loading && <p>Loading...</p>}
+        {!loading && habits.length === 0 && (
           <p className="text-gray-400">No habits yet.</p>
         )}
-
-        {/* Habit List */}
         <div className="space-y-4">
           {habits.map((habit) => {
             const log = getTodaysLog(habit.id);
@@ -162,7 +137,6 @@ export default function DashboardPage() {
                       : "Not yet logged today"}
                   </div>
                 </div>
-
                 <div className="flex gap-2 ml-4">
                   <button
                     aria-label="Accomplished"
@@ -178,7 +152,6 @@ export default function DashboardPage() {
                   >
                     {CheckIcon}
                   </button>
-
                   <button
                     aria-label="Not accomplished"
                     className={`rounded-full p-2 text-2xl border ${

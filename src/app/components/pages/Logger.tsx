@@ -1,11 +1,9 @@
+//DELETE LATER
 "use client";
+import { useEffect, useState } from "react";
+import BottomBar from "../../components/BottomBar";
+import HabitLogView from "../../components/HabitLogView";
 
-import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import BottomBar from "../../../components/BottomBar";
-import HabitLogView from "../../../components/HabitLogView";
-
-// Types for your habits and logs
 type Habit = {
   id: string;
   name: string;
@@ -19,14 +17,6 @@ type HabitLog = {
   timeStamp: string;
 };
 
-// Fetcher functions
-const fetchHabits = (): Promise<Habit[]> =>
-  fetch("/api/habit").then((res) => res.json());
-
-const fetchLogs = (): Promise<HabitLog[]> =>
-  fetch("/api/habit/log").then((res) => res.json());
-
-// Utility to compare dates
 function isSameDay(a: string | Date, b: string | Date) {
   const da = new Date(a);
   const db = new Date(b);
@@ -38,29 +28,24 @@ function isSameDay(a: string | Date, b: string | Date) {
 }
 
 export default function DashboardPage() {
-  //const queryClient = useQueryClient();
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [logs, setLogs] = useState<HabitLog[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
 
-  // Queries for habits and logs
-  const {
-    data: habits = [],
-    isLoading: habitsLoading,
-    error: habitsError,
-  } = useQuery({
-    queryKey: ["habits"],
-    queryFn: fetchHabits,
-  });
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      fetch("/api/habit").then((res) => res.json()),
+      fetch("/api/habit/log").then((res) => res.json()),
+    ])
+      .then(([habitsData, logsData]) => {
+        setHabits(habitsData);
+        setLogs(logsData);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-  const {
-    data: logs = [],
-    isLoading: logsLoading,
-    error: logsError,
-  } = useQuery({
-    queryKey: ["logs"],
-    queryFn: fetchLogs,
-  });
-
-  // Find today's log for a habit
   function getTodaysLog(habitId: string) {
     const today = new Date();
     return logs.find(
@@ -68,31 +53,17 @@ export default function DashboardPage() {
     );
   }
 
-  // Combined loading & error states
-  const isLoading = habitsLoading || logsLoading;
-  const isError = Boolean(habitsError || logsError);
-
   return (
     <div className="pb-20 min-h-screen bg-gray-50">
       <main className="max-w-md mx-auto pt-8 px-4">
         <h1 className="text-2xl font-bold mb-4">
           {selectedHabit ? selectedHabit.name : "Your Habits"}
         </h1>
-
-        {/* Loading & Error States */}
-        {isLoading && <p>Loading…</p>}
-        {isError && (
-          <p className="text-red-500">
-            Failed to load habits. Try again later.
-          </p>
-        )}
-
-        {/* No Habits */}
-        {!isLoading && !selectedHabit && habits.length === 0 && (
+        {loading && <p>Loading...</p>}
+        {!loading && !selectedHabit && habits.length === 0 && (
           <p className="text-gray-400">No habits yet.</p>
         )}
-
-        {/* Habit List */}
+        {/* If no habit is selected, show list */}
         {!selectedHabit && (
           <div className="space-y-4">
             {habits.map((habit) => {
@@ -123,8 +94,7 @@ export default function DashboardPage() {
             })}
           </div>
         )}
-
-        {/* Habit Log View */}
+        {/* If a habit is selected, show its logs */}
         {selectedHabit && (
           <HabitLogView
             habit={selectedHabit}
@@ -133,7 +103,6 @@ export default function DashboardPage() {
           />
         )}
       </main>
-
       <BottomBar />
     </div>
   );
