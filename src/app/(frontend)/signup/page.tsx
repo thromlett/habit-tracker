@@ -10,9 +10,9 @@ import { FaApple, FaFacebookF } from "react-icons/fa";
 export default function SignUpPage() {
   const [form, setForm] = useState({
     email: "",
+    name: "",
     password: "",
     confirm: "",
-    role: "USER",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -44,8 +44,8 @@ export default function SignUpPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: form.email,
+        name: form.name,
         password: form.password,
-        role: form.role,
       }),
     });
     const data = await res.json();
@@ -54,7 +54,7 @@ export default function SignUpPage() {
       setSuccess(
         "Registration successful! Please check your email to verify your account."
       );
-      setForm({ email: "", password: "", confirm: "", role: "USER" });
+      setForm({ email: "", name: "", password: "", confirm: "" });
       // Optionally auto-login after sign up:
       // await signIn("credentials", { email: form.email, password: form.password, redirect: false });
       // router.push("/");
@@ -100,7 +100,7 @@ export default function SignUpPage() {
                 type="email"
                 required
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-blue-500"
-                placeholder="Email Address"
+                placeholder="user@email.com"
                 value={form.email}
                 onChange={handleChange}
               />
@@ -108,6 +108,22 @@ export default function SignUpPage() {
                 {/* SVG icon can go here */}
               </span>
             </div>
+          </div>
+          {/* Name */}
+          <div>
+            <label className="block mb-1 text-gray-700" htmlFor="name">
+              Full Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-blue-500"
+              placeholder="John Doe"
+              value={form.name}
+              onChange={handleChange}
+            />
           </div>
           {/* Password */}
           <div>
@@ -121,7 +137,7 @@ export default function SignUpPage() {
                 type={showPassword ? "text" : "password"}
                 required
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-blue-500 pr-16"
-                placeholder="Password"
+                placeholder="Password123 (not this one)"
                 value={form.password}
                 onChange={handleChange}
               />
@@ -147,7 +163,7 @@ export default function SignUpPage() {
                 type={showConfirm ? "text" : "password"}
                 required
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-blue-500 pr-16"
-                placeholder="Confirm Password"
+                placeholder="Password123"
                 value={form.confirm}
                 onChange={handleChange}
               />
@@ -160,23 +176,6 @@ export default function SignUpPage() {
                 {showConfirm ? "Hide" : "Show"}
               </button>
             </div>
-          </div>
-          {/* Role Dropdown (optional, remove if you don't want users to choose role) */}
-          <div>
-            <label className="block mb-1 text-gray-700" htmlFor="role">
-              Role
-            </label>
-            <select
-              id="role"
-              name="role"
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:border-blue-500"
-              value={form.role}
-              onChange={handleChange}
-            >
-              <option value="USER">User</option>
-              <option value="ADMIN">Admin</option>
-              <option value="PAID_USER">Paid User</option>
-            </select>
           </div>
           {/* Sign Up Button */}
           <button

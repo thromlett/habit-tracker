@@ -25,20 +25,15 @@ export async function POST(req: NextRequest) {
 
   try {
     const data = await req.json();
-    const { email, password, role } = data;
+    const { email, name, password } = data;
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const allowedRoles = ["USER", "ADMIN", "PAID_USER"];
-    if (!allowedRoles.includes(role)) {
-      return NextResponse.json({ error: "Invalid role" }, { status: 400 });
-    }
 
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
-        role,
+        userName: name,
         emailVerified: null,
       },
     });
