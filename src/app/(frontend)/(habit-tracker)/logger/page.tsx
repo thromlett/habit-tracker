@@ -1,3 +1,4 @@
+// bugged: back end logic for displaying habits should be disconnected from dashobard logic
 "use client";
 
 import React, { useState } from "react";
@@ -133,7 +134,6 @@ export default function DashboardPage() {
           />
         )}
       </main>
-
       <BottomBar />
     </div>
   );

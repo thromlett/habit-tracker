@@ -17,9 +17,10 @@ function getStartOfWeek(date = new Date()) {
   return d;
 }
 
-/**
+/*
  * Checks whether a habit can be tracked today, based on its schedule.
  */
+
 async function canTrackToday(habitId: string): Promise<boolean> {
   // Fetch habit and its schedule
   const habit = await prisma.habit.findUnique({ where: { id: habitId } });
@@ -37,6 +38,25 @@ async function canTrackToday(habitId: string): Promise<boolean> {
     "SATURDAY",
   ];
   const todayEnum = dayEnum[today.getDay()];
+
+  //Returns error if habit has already been tracked today
+  /*   
+  const todayLog = await prisma.habitLog.findFirst({
+    where: {
+      habitId,
+      timeStamp: {
+        gte: new Date(today.setHours(0, 0, 0, 0)),
+        lt: new Date(today.setHours(23, 59, 59, 999)),
+      },
+    },
+  });
+  if (todayLog) {
+    throw NextResponse.json(
+      { error: "Habit already tracked today" },
+      { status: 409 }
+    );
+  }
+ */
 
   // Count logs since start of the week
   const startOfWeek = getStartOfWeek(today);
@@ -71,6 +91,26 @@ async function canTrackToday(habitId: string): Promise<boolean> {
     case "customDates": {
       const todayStr = today.toISOString().split("T")[0];
       return schedule.dates.includes(todayStr);
+    }
+    case "interval": {
+      //also returns true if a habit was logged today to prevent hiding on loggable days after logging
+      if (mostRecentLog) {
+        const lastLogDate = new Date(mostRecentLog.timeStamp);
+        const todayStart = new Date(today);
+        todayStart.setHours(0, 0, 0, 0);
+        const todayEnd = new Date(today);
+        todayEnd.setHours(23, 59, 59, 999);
+        if (lastLogDate >= todayStart && lastLogDate <= todayEnd) {
+          return true;
+        }
+        const lastLogTime = lastLogDate.getTime();
+        const now = Date.now();
+        const daysSince = Math.floor(
+          (now - lastLogTime) / (1000 * 60 * 60 * 24)
+        );
+        return daysSince > schedule.intervalDays;
+      }
+      return true;
     }
     case "interval": {
       if (mostRecentLog) {

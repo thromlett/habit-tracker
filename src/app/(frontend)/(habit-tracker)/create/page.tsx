@@ -43,16 +43,11 @@ export default function CreatePage() {
       description,
       schedule: {
         type: frequency,
-        days: [
-          "MONDAY",
-          "TUESDAY",
-          "WEDNESDAY",
-          "THURSDAY",
-          "FRIDAY",
-          "SATURDAY",
-          "SUNDAY",
-        ],
-      }, // Placeholder for schedule, make adjustable later
+        ...(frequency === "daysOfWeek" && { days: daysSelected }),
+        ...(frequency === "timePerWeek" && { timesPerWeek }),
+        ...(frequency === "customDates" && { customDates }),
+        ...(frequency === "interval" && { interval: intervalValue }),
+      },
     };
 
     // POST to backend
