@@ -1,14 +1,14 @@
 import { authOptions } from "./authOptions";
 import bcrypt from "bcryptjs";
 
-jest.mock("../../../../../lib/prisma", () => ({
+jest.mock("@/lib/prisma", () => ({
   prisma: {
     user: {
       findUnique: jest.fn(),
     },
   },
 }));
-import { prisma } from "../../../../../lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 const authorize = authOptions.providers[0].options.authorize;
 

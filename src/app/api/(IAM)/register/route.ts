@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../../lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
-import { sendVerificationEmail } from "../../../../../lib/email";
+import { sendVerificationEmail } from "../../../../lib/email";
 
 // Helper for tests (avoids ESM)
 function testNanoid(length = 21) {

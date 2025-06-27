@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../../lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!token || !newPassword) {
       return NextResponse.json(
         { error: "Token and new password are required" },
-        { status: 401 }
+        { status: 400 }
       );
     }
 
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!resetToken || resetToken.expires < new Date()) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
-        { status: 402 }
+        { status: 400 }
       );
     }
 
