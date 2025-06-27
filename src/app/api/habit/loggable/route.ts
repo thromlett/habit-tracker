@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { getServerSession } from "next-auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   // Authenticate user
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -17,7 +17,32 @@ export async function GET() {
   // Fetch all habits for this user
   const habits = await prisma.habit.findMany({ where: { userId } });
 
-  return NextResponse.json(habits);
+  // Build URL for log verification
+  const origin = new URL(req.url).origin;
+  const logUrlBase = `${origin}/api/habit/log`;
+
+  const loggableHabits = [];
+
+  for (const habit of habits) {
+    // Prepare verifyOnly request
+    const url = new URL(logUrlBase);
+    url.searchParams.set("verifyOnly", "true");
+    url.searchParams.set("habitId", habit.id);
+
+    // Call the log endpoint with session cookies
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      headers: { cookie: req.headers.get("cookie") || "" },
+    });
+    if (!res.ok) continue;
+
+    const { canTrack } = await res.json();
+    if (canTrack) {
+      loggableHabits.push(habit);
+    }
+  }
+
+  return NextResponse.json(loggableHabits);
 }
 
 export async function POST(req: NextRequest) {
@@ -56,42 +81,6 @@ export async function POST(req: NextRequest) {
     console.error(error);
     return NextResponse.json(
       { error: "Failed to create habit" },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(req: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user?.id) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-    }
-    const userId = session.user.id;
-
-    const { habitId } = await req.json();
-    if (!habitId) {
-      return NextResponse.json({ error: "Missing habitId" }, { status: 400 });
-    }
-
-    // Check if the habit belongs to the user
-    const habit = await prisma.habit.findUnique({
-      where: { id: habitId, userId },
-    });
-    if (!habit) {
-      return NextResponse.json({ error: "Habit not found" }, { status: 404 });
-    }
-
-    await prisma.habit.delete({ where: { id: habitId } });
-
-    return NextResponse.json(
-      { message: "Habit deleted successfully" },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { error: "Failed to delete habit" },
       { status: 500 }
     );
   }

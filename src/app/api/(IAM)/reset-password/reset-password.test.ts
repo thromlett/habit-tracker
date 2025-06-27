@@ -1,4 +1,11 @@
-jest.mock("../../../../../lib/prisma", () => ({
+beforeAll(() => {
+  jest.spyOn(console, "error").mockImplementation(() => {});
+});
+afterAll(() => {
+  (console.error as jest.Mock).mockRestore();
+});
+
+jest.mock("@/lib/prisma", () => ({
   prisma: {
     passwordResetToken: {
       findUnique: jest.fn(),
@@ -16,7 +23,7 @@ jest.mock("bcryptjs", () => ({
 
 import { POST } from "./route";
 import { NextRequest } from "next/server";
-import { prisma } from "../../../../../lib/prisma";
+import { prisma } from "../../../../lib/prisma";
 import bcrypt from "bcryptjs";
 
 function makeReq(body: Record<string, unknown>) {
