@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!token || !newPassword) {
       return NextResponse.json(
         { error: "Token and new password are required" },
-        { status: 400 }
+        { status: 401 }
       );
     }
 
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!resetToken || resetToken.expires < new Date()) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
-        { status: 400 }
+        { status: 402 }
       );
     }
 

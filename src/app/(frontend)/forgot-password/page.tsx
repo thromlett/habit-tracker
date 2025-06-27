@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -13,7 +13,7 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/auth/forgot-password", {
+      const res = await fetch("/api/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: form.email }),
@@ -34,8 +34,8 @@ export default function ForgotPasswordPage() {
       } else {
         setError(data.error || "Error sending reset email.");
       }
-    } catch (err){
-        console.error(err);
+    } catch (err) {
+      console.error(err);
       setError("Unexpected error. Please try again.");
     } finally {
       setLoading(false);
@@ -50,8 +50,12 @@ export default function ForgotPasswordPage() {
           <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-blue-500 to-blue-300" />
         </div>
         {/* Welcome Message */}
-        <h2 className="text-3xl font-bold text-center mb-1">Forgot Password?</h2>
-        <p className="text-center text-gray-500 mb-6">Please enter the email associated with your account.</p>
+        <h2 className="text-3xl font-bold text-center mb-1">
+          Forgot Password?
+        </h2>
+        <p className="text-center text-gray-500 mb-6">
+          Please enter the email associated with your account.
+        </p>
         {/* Error message */}
         {error && (
           <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-4 text-center">
@@ -61,7 +65,8 @@ export default function ForgotPasswordPage() {
         {/* Success message */}
         {emailSent && (
           <div className="bg-green-100 text-green-700 px-3 py-2 rounded mb-4 text-center">
-            An email with a link to reset your password was sent to the email address associated with your account
+            An email with a link to reset your password was sent to the email
+            address associated with your account
           </div>
         )}
         {/* Form */}
@@ -130,7 +135,10 @@ export default function ForgotPasswordPage() {
         {/* Sign Up */}
         <p className="text-center text-gray-500">
           Don’t have an account?{" "}
-          <Link href="/signup" className="text-blue-600 font-medium hover:underline">
+          <Link
+            href="/signup"
+            className="text-blue-600 font-medium hover:underline"
+          >
             Sign Up
           </Link>
         </p>
