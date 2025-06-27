@@ -131,6 +131,13 @@ export default function DashboardPage() {
             habit={selectedHabit}
             logs={logs.filter((log) => log.habitId === selectedHabit.id)}
             onBack={() => setSelectedHabit(null)}
+            onDelete={async () => {
+              if (!selectedHabit) return;
+              await fetch(`/api/habit/${selectedHabit.id}`, {
+                method: "DELETE",
+              });
+              setSelectedHabit(null);
+            }}
           />
         )}
       </main>

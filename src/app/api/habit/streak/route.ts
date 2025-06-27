@@ -43,4 +43,5 @@ export async function GET() {
       streak++;
     }
   }
+  return NextResponse.json({ streak }, { status: 200 });
 }

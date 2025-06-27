@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const data = await req.json();
-    const { email, name, password } = data;
+    const { email, userName, password } = data;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
       data: {
         email,
         password: hashedPassword,
-        userName: name,
+        userName,
         emailVerified: null,
       },
     });

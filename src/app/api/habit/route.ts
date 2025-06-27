@@ -60,3 +60,39 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?.id) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+    const userId = session.user.id;
+
+    const { habitId } = await req.json();
+    if (!habitId) {
+      return NextResponse.json({ error: "Missing habitId" }, { status: 400 });
+    }
+
+    // Check if the habit belongs to the user
+    const habit = await prisma.habit.findUnique({
+      where: { id: habitId, userId },
+    });
+    if (!habit) {
+      return NextResponse.json({ error: "Habit not found" }, { status: 404 });
+    }
+
+    await prisma.habit.delete({ where: { id: habitId } });
+
+    return NextResponse.json(
+      { message: "Habit deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to delete habit" },
+      { status: 500 }
+    );
+  }
+}

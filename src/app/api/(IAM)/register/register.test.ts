@@ -16,7 +16,7 @@ describe("POST /api/register", () => {
   it("registers a new user and sends a verification email", async () => {
     const email = "integrationtest@example.com";
     const password = "TestPassword123!";
-    const role = "USER";
+    const userName = "username123";
 
     (emailModule.sendVerificationEmail as jest.Mock).mockResolvedValue(
       undefined
@@ -24,7 +24,7 @@ describe("POST /api/register", () => {
 
     const req = new Request("http://localhost/api/register", {
       method: "POST",
-      body: JSON.stringify({ email, password, role }),
+      body: JSON.stringify({ email, password, userName }),
       headers: { "Content-Type": "application/json" },
     });
     const nextReq = new NextRequest(req);
@@ -50,25 +50,6 @@ describe("POST /api/register", () => {
       to: email,
       verificationUrl: expect.stringContaining("/api/verify?token="),
     });
-  });
-
-  it("rejects invalid roles", async () => {
-    const req = new Request("http://localhost/api/register", {
-      method: "POST",
-      body: JSON.stringify({
-        email: "badrole@example.com",
-        password: "password",
-        role: "NOT_A_ROLE",
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const nextReq = new NextRequest(req);
-
-    const response = await POST(nextReq);
-    const data = await response.json();
-
-    expect(response.status).toBe(400);
-    expect(data.error).toBe("Invalid role");
   });
 
   /*   it("handles duplicate email", async () => {
