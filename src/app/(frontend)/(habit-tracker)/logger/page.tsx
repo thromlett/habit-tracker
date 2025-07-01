@@ -39,7 +39,7 @@ function isSameDay(a: string | Date, b: string | Date) {
 }
 
 export default function DashboardPage() {
-  //const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
 
   // Queries for habits and logs

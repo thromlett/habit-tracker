@@ -2,6 +2,7 @@
 "use client";
 import { useState } from "react";
 import BottomBar from "../../../components/BottomBar";
+import { useQueryClient } from "@tanstack/react-query";
 /* 
 localhost/api/habits GET //this gets all habits
 localhost/api/habits/:id GET //gets a single habit by id
@@ -28,6 +29,8 @@ export default function CreatePage() {
   const [timesPerWeek, setTimesPerWeek] = useState<number | "">("");
   const [customDates, setCustomDates] = useState<string[]>([]);
   const [intervalValue, setIntervalValue] = useState<number | "">("");
+
+  const qc = useQueryClient();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -234,6 +237,10 @@ export default function CreatePage() {
             type="submit"
             disabled={loading}
             className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-lg shadow hover:bg-blue-700 transition"
+            onClick={() => {
+              qc.invalidateQueries({ queryKey: ["habits"] });
+              qc.invalidateQueries({ queryKey: ["logs"] });
+            }}
           >
             {loading ? "Adding..." : "Add Habit"}
           </button>
