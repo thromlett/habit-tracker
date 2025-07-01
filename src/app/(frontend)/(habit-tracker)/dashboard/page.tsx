@@ -44,7 +44,7 @@ export default function DashboardPage() {
     isLoading: habitsLoading,
     error: habitsError,
   } = useQuery({
-    queryKey: ["habit"],
+    queryKey: ["habits"],
     queryFn: fetchHabits,
   });
 
@@ -78,6 +78,7 @@ export default function DashboardPage() {
     const data = await res.json();
     if (res.ok) {
       // Update React Query cache without refetch
+      //changing this from "habits" to "logs" may make some code obsolete (in a good way). Check later
       queryClient.setQueryData<HabitLog[]>(["habits"], (old = []) => [
         ...old,
         {
