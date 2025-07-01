@@ -78,7 +78,7 @@ export default function DashboardPage() {
     const data = await res.json();
     if (res.ok) {
       // Update React Query cache without refetch
-      queryClient.setQueryData<HabitLog[]>(["logs"], (old = []) => [
+      queryClient.setQueryData<HabitLog[]>(["habits"], (old = []) => [
         ...old,
         {
           id: data.id,
