@@ -1,11 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
 import BottomBar from "../../../components/BottomBar";
+import { signOut } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 
 export default function ProfilePage() {
+  return (
+    <SessionProvider>
+      <ProfileContent />
+    </SessionProvider>
+  );
+}
+
+function ProfileContent() {
   const [userName, setName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  //const { data: session } = useSession();
 
   useEffect(() => {
     async function fetchProfile() {
@@ -47,11 +59,18 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-          <hr className="my-4" />
-          <div>
-            <span className="block text-gray-700 font-medium mb-1">Streak</span>
-            <span className="text-blue-700 font-bold text-xl">4 days</span>
-          </div>
+          {/*sign out button*/}
+          <button
+            onClick={() =>
+              signOut({
+                // Optional: where to redirect after sign-out
+                callbackUrl: "/",
+              })
+            }
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Sign Out
+          </button>
           {/* Add more settings/info here */}
         </div>
       </main>
