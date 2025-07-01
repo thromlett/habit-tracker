@@ -28,6 +28,7 @@ export function Providers({ children }: { children: ReactNode }) {
   );
 
   // Prefetch habits & logs on first render
+  //NOTE FOR LATER: THIS MIGHT BE CAUSING ISSUES
   React.useEffect(() => {
     queryClient.prefetchQuery({ queryKey: ["habits"], queryFn: fetchHabits });
     queryClient.prefetchQuery({ queryKey: ["logs"], queryFn: fetchLogs });
