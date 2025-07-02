@@ -34,8 +34,18 @@ export default function Home() {
 
   return (
     <div>
-      <button onClick={takePhoto}>Open Camera</button>
-      <button onClick={notifyLater}>Notify Me in 5s</button>
+      <button
+        onClick={takePhoto}
+        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+      >
+        Open Camera
+      </button>
+      <button
+        onClick={notifyLater}
+        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+      >
+        Notify Me in 5s
+      </button>
     </div>
   );
 }
