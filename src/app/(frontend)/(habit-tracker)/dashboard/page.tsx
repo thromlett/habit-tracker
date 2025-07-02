@@ -79,7 +79,7 @@ export default function DashboardPage() {
     if (res.ok) {
       // Update React Query cache without refetch
       //changing this from "habits" to "logs" may make some code obsolete (in a good way). Check later
-      queryClient.setQueryData<HabitLog[]>(["habits"], (old = []) => [
+      queryClient.setQueryData<HabitLog[]>(["habit"], (old = []) => [
         ...old,
         {
           id: data.id,
