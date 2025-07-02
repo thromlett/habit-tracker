@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import BottomBar from "../../../components/BottomBar";
 import { signOut } from "next-auth/react";
 import { SessionProvider } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export default function ProfilePage() {
   return (
@@ -72,6 +73,12 @@ function ProfileContent() {
             Sign Out
           </button>
           {/* Add more settings/info here */}
+          <button
+            onClick={() => redirect("/mobile-testing")}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            TEST
+          </button>
         </div>
       </main>
       <BottomBar />
