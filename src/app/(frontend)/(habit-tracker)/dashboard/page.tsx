@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import BottomBar from "../../../components/BottomBar";
 
 // Types for your habits and logs
 interface Habit {
@@ -204,7 +203,6 @@ export default function DashboardPage() {
           })}
         </div>
       </main>
-      <BottomBar />
     </div>
   );
 }

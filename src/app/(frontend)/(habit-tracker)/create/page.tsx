@@ -1,21 +1,8 @@
 // app/create/page.tsx
 "use client";
 import { useState } from "react";
-import BottomBar from "../../../components/BottomBar";
 import { useQueryClient } from "@tanstack/react-query";
-/* 
-localhost/api/habits GET //this gets all habits
-localhost/api/habits/:id GET //gets a single habit by id
-localhost/api/habits/:id/logs POST
-localhost/api/habits/:id/logs GET
 
-localhost/api/order/:id PATCH
-
-localhost/api/log POST //tracks the habit referenced by id
-localhost/api/log/:id GET //gets an instance of the log entity
-localhost/api/log/:id?habit=<habitid> GET //gets an instance of the log entity
-localhost/api/log/:id DELETE 
- */
 export default function CreatePage() {
   const [name, setName] = useState("");
   const [disposition, setDisposition] = useState("");
@@ -248,7 +235,6 @@ export default function CreatePage() {
           {success && <p className="text-green-600">Habit created!</p>}
         </form>
       </main>
-      <BottomBar />
     </div>
   );
 }
