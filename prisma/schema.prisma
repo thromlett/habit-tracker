@@ -68,7 +68,7 @@ model Habit {
 
 model HabitLog {
   id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  habit   Habit    @relation(fields: [habitId], references: [id])
+  habit   Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
   habitId String   @db.ObjectId
   completed Boolean @default(false)
 

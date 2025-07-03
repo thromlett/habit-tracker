@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import {
+  useQueryClient,
   QueryClient,
   QueryClientProvider,
   HydrationBoundary,
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export default function HabitLogger({ initialHabits, initialLogs }: Props) {
+  const qc = useQueryClient();
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [queryClient] = useState(() => new QueryClient());
 
@@ -45,8 +47,14 @@ export default function HabitLogger({ initialHabits, initialLogs }: Props) {
                     (log) => log.habitId === selectedHabit.id
                   )}
                   onBack={() => setSelectedHabit(null)}
-                  onDelete={() => {
-                    // TODO: implement delete logic
+                  onDelete={async () => {
+                    if (!selectedHabit) return;
+                    await fetch(`/api/habit/${selectedHabit.id}`, {
+                      method: "DELETE",
+                    });
+                    qc.invalidateQueries({ queryKey: ["habits"] });
+                    qc.invalidateQueries({ queryKey: ["logs"] });
+                    setSelectedHabit(null);
                   }}
                 />
               ) : (
