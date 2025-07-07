@@ -30,6 +30,10 @@ export function getHabits(): Promise<Habit[]> {
   return fetchWithSession("/api/habit");
 }
 
+export function getHabitsLoggable(): Promise<Habit[]> {
+  return fetchWithSession("/api/habit/loggable");
+}
+
 export function getLogs(): Promise<HabitLog[]> {
   return fetchWithSession("/api/habit/log");
 }
