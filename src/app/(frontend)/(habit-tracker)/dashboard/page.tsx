@@ -2,7 +2,8 @@ import React from "react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import HabitDashboard from "@/components/pages/HabitDashboard";
-import { getHabitsLoggable, getLogs } from "@/lib/habit";
+import { getLoggableHabits, getLogs } from "@/lib/habit-server";
+import type { HabitLog, Habit } from "@/lib/habit";
 
 export default async function DashboardPage() {
   const session = await getServerSession();
@@ -10,8 +11,8 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const habits = await getHabitsLoggable();
-  const logs = await getLogs();
+  const habits = (await getLoggableHabits()) as Habit[];
+  const logs = (await getLogs()) as HabitLog[];
 
   return <HabitDashboard initialHabits={habits} initialLogs={logs} />;
 }

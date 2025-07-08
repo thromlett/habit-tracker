@@ -1,5 +1,3 @@
-import { cookies } from "next/headers";
-
 export type Habit = {
   id: string;
   name: string;
@@ -13,27 +11,31 @@ export type HabitLog = {
   timeStamp: string;
 };
 
-async function fetchWithSession<T>(path: string): Promise<T> {
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll();
-  const cookieHeader = allCookies.map((c) => `${c.name}=${c.value}`).join("; ");
+export interface Schedule {
+  type: "daysOfWeek" | "timePerWeek" | "customDates" | "interval";
+  days?: string[];
+  timesPerWeek?: number;
+  customDates?: string[];
+  interval?: number;
+}
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${path}`, {
-    cache: "no-store",
-    headers: { cookie: cookieHeader },
+export interface CreateHabitBody {
+  name: string;
+  disposition: "GOOD" | "BAD";
+  description: string;
+  schedule: Schedule;
+}
+
+export async function createHabit(body: CreateHabitBody): Promise<Habit> {
+  const res = await fetch("/api/habit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(body),
   });
-  if (!res.ok) throw new Error(`Failed to fetch ${path}: ${res.status}`);
+  if (!res.ok) {
+    const data = await res.json();
+    throw new Error(data.error || "Failed to create habit");
+  }
   return res.json();
-}
-
-export function getHabits(): Promise<Habit[]> {
-  return fetchWithSession("/api/habit");
-}
-
-export function getHabitsLoggable(): Promise<Habit[]> {
-  return fetchWithSession("/api/habit/loggable");
-}
-
-export function getLogs(): Promise<HabitLog[]> {
-  return fetchWithSession("/api/habit/log");
 }
