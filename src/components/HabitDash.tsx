@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useLoggableHabits, useLogs } from "@/hooks/";
+import { useLoggableHabit, useLogs } from "@/hooks/";
 import { isSameDay } from "@/utils/date";
 import { HabitLog } from "@/lib/habit";
 import { CheckIcon, XIcon } from "./svgs/icons";
@@ -11,7 +11,7 @@ export default function HabitList() {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState<string | null>(null);
 
-  const { data: habits = [], isLoading: loadingH } = useLoggableHabits();
+  const { data: habits = [], isLoading: loadingH } = useLoggableHabit();
   const { data: logs = [], isLoading: loadingL } = useLogs();
   const loading = loadingH || loadingL;
 

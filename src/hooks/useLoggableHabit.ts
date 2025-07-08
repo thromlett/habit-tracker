@@ -9,10 +9,10 @@ export async function fetchLoggableHabits(): Promise<Habit[]> {
   return res.json();
 }
 
-export function useLoggableHabits() {
+export function useLoggableHabit() {
   const { status } = useSession();
   return useQuery<Habit[]>({
-    queryKey: ["habits"],
+    queryKey: ["habitsLoggable"],
     queryFn: fetchLoggableHabits,
     staleTime: 1000 * 60,
     enabled: status === "authenticated",

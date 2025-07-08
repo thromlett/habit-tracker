@@ -1,3 +1,3 @@
 export { useHabits, fetchHabits } from "./useHabits";
 export { useLogs, fetchLogs } from "./useLogs";
-export { useLoggableHabits, fetchLoggableHabits } from "./useLoggableHabit";
+export { useLoggableHabit, fetchLoggableHabits } from "./useLoggableHabit";
