@@ -18,9 +18,6 @@ interface Props {
   initialHabits: Habit[];
   initialLogs: HabitLog[];
 }
-//attempt at vercel fix
-export const dynamic = "force-dynamic";
-
 export default function DashboardPage({ initialHabits, initialLogs }: Props) {
   const queryClient = useQueryClient();
 
