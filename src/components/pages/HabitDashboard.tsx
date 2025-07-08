@@ -18,8 +18,8 @@ interface Props {
   initialHabits: Habit[];
   initialLogs: HabitLog[];
 }
-//attempt at vercel fix
-export const dynamic = "force-dynamic";
+
+// Utility to compare dates
 
 export default function DashboardPage({ initialHabits, initialLogs }: Props) {
   const queryClient = useQueryClient();
