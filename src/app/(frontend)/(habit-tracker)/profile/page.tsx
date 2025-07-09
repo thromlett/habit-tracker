@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import BottomBar from "../../../components/BottomBar";
 import { signOut } from "next-auth/react";
 import { SessionProvider } from "next-auth/react";
 import { redirect } from "next/navigation";
@@ -81,7 +80,6 @@ function ProfileContent() {
           </button>
         </div>
       </main>
-      <BottomBar />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-// hooks/useDashboardHabits.ts
+// May Be Deprecated
 import { useState, useEffect } from "react";
 
 export type DashboardHabit = {
@@ -15,7 +15,7 @@ export function useDashboardHabits() {
 
   useEffect(() => {
     setLoading(true);
-    fetch("/api/habits") // Your backend endpoint
+    fetch("/api/habits")
       .then((res) => res.json())
       .then((data) => setHabits(data))
       .finally(() => setLoading(false));
