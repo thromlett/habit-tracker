@@ -27,7 +27,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password?token=${token}`;
+    // Derive the current origin from the incoming request URL
+    const { origin } = new URL(req.url);
+    const resetUrl = `${origin}/reset-password?token=${token}`;
     await sendPasswordResetEmail({ to: email, resetUrl });
 
     return NextResponse.json({

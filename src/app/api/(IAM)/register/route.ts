@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/verify?token=${verificationToken}`;
+    const { origin } = new URL(req.url);
+    const verificationUrl = `${origin}/api/verify?token=${verificationToken}`;
     await sendVerificationEmail({ to: email, verificationUrl });
 
     return NextResponse.json(
