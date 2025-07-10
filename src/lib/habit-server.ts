@@ -1,31 +1,28 @@
-// lib/fetchWithSession.ts
-import { headers } from "next/headers";
-
-// Make sure your pages/layouts that import this file also export
-// `export const dynamic = 'force-dynamic';` at the top level so
-// Next.js doesn’t static-optimize them.
-export const dynamic = "force-dynamic";
+import { cookies, headers } from "next/headers";
 
 async function fetchWithSession<T>(path: string): Promise<T> {
-  // 1. Await the headers() call, then pull the cookie header
-  const headersList = await headers();
-  const cookieHeader = headersList.get("cookie") ?? "";
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
 
-  // 2. Compute the base URL at runtime
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ??
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000");
+  // grab host & protocol from the current request
+  const hdrs = await headers();
+  const host = hdrs.get("host")!; // e.g. "my-app-abc.vercel.app"
+  const proto = hdrs.get("x-forwarded-proto") || "https";
+  const origin = `${proto}://${host}`;
 
-  // 3. Fetch with no-store so it only runs at request time
-  const res = await fetch(`${baseUrl}${path}`, {
+  const res = await fetch(`${origin}${path}`, {
+
     cache: "no-store",
     headers: { cookie: cookieHeader },
   });
 
   if (!res.ok) {
-    throw new Error(`Fetch error (${res.status}) for ${path}`);
+    const text = await res.text();
+    throw new Error(`Fetch error (${res.status}) for ${path}: ${text}`);
+
   }
   return res.json();
 }
