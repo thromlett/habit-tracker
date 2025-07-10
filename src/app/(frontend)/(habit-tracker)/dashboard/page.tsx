@@ -9,6 +9,7 @@ export default async function DashboardPage() {
   const session = await getServerSession();
   if (!session) {
     redirect("/login");
+
   }
 
   const habits = (await getLoggableHabits()) as Habit[];
