@@ -39,25 +39,6 @@ async function canTrackToday(habitId: string): Promise<boolean> {
   ];
   const todayEnum = dayEnum[today.getDay()];
 
-  //Returns error if habit has already been tracked today
-  /*   
-  const todayLog = await prisma.habitLog.findFirst({
-    where: {
-      habitId,
-      timeStamp: {
-        gte: new Date(today.setHours(0, 0, 0, 0)),
-        lt: new Date(today.setHours(23, 59, 59, 999)),
-      },
-    },
-  });
-  if (todayLog) {
-    throw NextResponse.json(
-      { error: "Habit already tracked today" },
-      { status: 409 }
-    );
-  }
- */
-
   // Count logs since start of the week
   const startOfWeek = getStartOfWeek(today);
   const oldestLogThisWeek = await prisma.habitLog.findFirst({
@@ -112,7 +93,8 @@ async function canTrackToday(habitId: string): Promise<boolean> {
       }
       return true;
     }
-    case "interval": {
+    //There were two interval cases for some reason, so I commented out this one
+    /*     case "interval": {
       if (mostRecentLog) {
         const lastLogTime = new Date(mostRecentLog.timeStamp).getTime();
         const now = Date.now();
@@ -122,7 +104,7 @@ async function canTrackToday(habitId: string): Promise<boolean> {
         return daysSince > schedule.intervalDays;
       }
       return true;
-    }
+    } */
     default:
       return true;
   }

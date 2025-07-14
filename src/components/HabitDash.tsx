@@ -7,7 +7,7 @@ import { CheckIcon, XIcon } from "./svgs/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-export default function HabitList() {
+export default function HabitDash() {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState<string | null>(null);
 
