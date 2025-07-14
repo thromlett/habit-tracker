@@ -27,7 +27,7 @@ export default function DashboardPage({ initialHabits, initialLogs }: Props) {
         <HydrationBoundary
           state={{
             queries: [
-              { queryKey: ["habits"], state: { data: initialHabits } },
+              { queryKey: ["habitsLoggable"], state: { data: initialHabits } },
               { queryKey: ["logs"], state: { data: initialLogs } },
             ],
           }}

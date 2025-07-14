@@ -17,6 +17,7 @@
     "@prisma/client": "^6.9.0",
     "@tanstack/react-query": "^5.81.5",
     "bcryptjs": "^3.0.2",
+    "ldrs": "^1.1.7",
     "mongodb": "^6.17.0",
     "nanoid": "^5.1.5",
     "next": "15.3.2",

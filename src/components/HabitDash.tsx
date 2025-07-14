@@ -6,6 +6,7 @@ import { HabitLog } from "@/lib/habit";
 import { CheckIcon, XIcon } from "./svgs/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { Ring } from "ldrs/react";
 
 export default function HabitDash() {
   const queryClient = useQueryClient();
@@ -21,7 +22,12 @@ export default function HabitDash() {
     );
   }
 
-  if (loading) return <p>Loading…</p>;
+  if (loading)
+    return (
+      <p>
+        <Ring size="60" color="coral"></Ring>
+      </p>
+    );
   if (habits.length === 0)
     return <p className="text-gray-400">No habits yet.</p>;
 
