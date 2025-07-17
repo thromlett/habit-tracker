@@ -1,5 +1,5 @@
 "use client";
-import BottomBar from "./BottomBar";
+import BottomBar from "../../../../components/BottomBar";
 
 type Habit = {
   id: string;

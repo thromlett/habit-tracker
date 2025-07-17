@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import HabitLogger from "@/components/pages/HabitLogger";
+import HabitLogger from "@/app/(frontend)/(habit-tracker)/logger/HabitLogger";
 import { getHabits, getLogs } from "@/lib/habit-server";
 import type { HabitLog, Habit } from "@/lib/habit";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import CreatePageClient from "@/components/pages/HabitCreate";
+import CreatePageClient from "@/app/(frontend)/(habit-tracker)/create/HabitCreate";
 
 export default async function CreateSSR() {
   const session = await getServerSession();

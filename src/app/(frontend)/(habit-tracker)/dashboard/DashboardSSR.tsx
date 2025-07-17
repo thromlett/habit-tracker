@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import HabitDashboard from "@/components/pages/HabitDashboard";
+import HabitDashboard from "@/app/(frontend)/(habit-tracker)/dashboard/HabitDashboard";
 import { getLoggableHabits, getLogs } from "@/lib/habit-server";
 import type { HabitLog, Habit } from "@/lib/habit";
 

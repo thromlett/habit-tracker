@@ -3,7 +3,7 @@ import React from "react";
 import { useLoggableHabit, useLogs } from "@/hooks/";
 import { isSameDay } from "@/utils/date";
 import { HabitLog } from "@/lib/habit";
-import { CheckIcon, XIcon } from "./svgs/icons";
+import { CheckIcon, XIcon } from "../../../../components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 

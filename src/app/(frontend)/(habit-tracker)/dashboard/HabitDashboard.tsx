@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { Habit, HabitLog } from "@/lib/habit";
 //import { useHabits, useLogs } from "@/hooks/";
-import HabitDash from "../HabitDash";
+import HabitDash from "./HabitDash";
 import { SessionProvider } from "next-auth/react";
 
 // Types for your habits and logs
