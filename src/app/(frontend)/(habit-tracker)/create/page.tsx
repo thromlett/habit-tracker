@@ -1,11 +1,11 @@
 import React from "react";
-import { redirect } from "next/navigation"; // *new
-import { getServerSession } from "next-auth/next"; // *new
-import CreatePageClient from "@/components/pages/HabitCreate"; // *new
+import { redirect } from "next/navigation";
+import { getServerSession } from "next-auth/next";
+import CreatePageClient from "@/components/pages/HabitCreate";
 
 export default async function CreatePage() {
-  const session = await getServerSession(); // *new
-  if (!session) redirect("/api/auth/signin"); // *new
+  const session = await getServerSession();
+  if (!session) redirect("/api/auth/login");
 
   return <CreatePageClient />;
 }

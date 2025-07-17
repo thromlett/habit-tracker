@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { useCreateHabit } from "@/hooks/useCreateHabit";
 import { CreateHabitBody, Schedule } from "@/lib/habit";
 
@@ -17,7 +17,6 @@ export default function CreatePageClient() {
 }
 
 function CreateHabitForm() {
-  const { status } = useSession();
   const { mutate, isPending, error, isSuccess } = useCreateHabit();
   const [name, setName] = useState("");
   const [disposition, setDisposition] = useState<"GOOD" | "BAD">("GOOD");
@@ -27,8 +26,6 @@ function CreateHabitForm() {
   const [timesPerWeek, setTimesPerWeek] = useState<number | "">("");
   const [customDates, setCustomDates] = useState<string[]>([]);
   const [intervalValue, setIntervalValue] = useState<number | "">("");
-
-  if (status !== "authenticated") return <p>Loading session…</p>;
 
   function handleDayToggle(day: string) {
     setDaysSelected((prev) =>
