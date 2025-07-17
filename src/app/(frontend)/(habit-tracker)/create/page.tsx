@@ -1,11 +1,11 @@
 import React from "react";
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth/next";
-import CreatePageClient from "@/components/pages/HabitCreate";
+import CreateSSR from "./CreateSSR";
+import LoadIcon from "@/components/LoadIcon";
 
 export default async function CreatePage() {
-  const session = await getServerSession();
-  if (!session) redirect("/api/auth/login");
-
-  return <CreatePageClient />;
+  return (
+    <React.Suspense fallback={<LoadIcon />}>
+      <CreateSSR />;
+    </React.Suspense>
+  );
 }
