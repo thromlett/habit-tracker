@@ -57,6 +57,7 @@ model Habit {
   userId String  @db.ObjectId
 
   schedule Json?
+  nextDue DateTime?
 
   createdAt   DateTime
   startDate   DateTime?

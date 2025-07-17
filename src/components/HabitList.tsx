@@ -9,9 +9,8 @@ interface Props {
 }
 
 export default function HabitList({ onSelect }: Props) {
-  const { data: habits = [], isLoading: loadingH } = useHabits();
-  const { data: logs = [], isLoading: loadingL } = useLogs();
-  const loading = loadingH || loadingL;
+  const { data: habits = [] } = useHabits();
+  const { data: logs = [] } = useLogs();
 
   function getTodaysLog(habitId: string) {
     return logs.find(
@@ -19,7 +18,6 @@ export default function HabitList({ onSelect }: Props) {
     );
   }
 
-  if (loading) return <p>Loading…</p>;
   if (habits.length === 0)
     return <p className="text-gray-400">No habits yet.</p>;
 

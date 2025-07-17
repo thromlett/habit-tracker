@@ -7,13 +7,12 @@ import { CheckIcon, XIcon } from "./svgs/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-export default function HabitList() {
+export default function HabitDash() {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState<string | null>(null);
 
-  const { data: habits = [], isLoading: loadingH } = useLoggableHabit();
-  const { data: logs = [], isLoading: loadingL } = useLogs();
-  const loading = loadingH || loadingL;
+  const { data: habits = [] } = useLoggableHabit();
+  const { data: logs = [] } = useLogs();
 
   function getTodaysLog(habitId: string) {
     return logs.find(
@@ -21,7 +20,6 @@ export default function HabitList() {
     );
   }
 
-  if (loading) return <p>Loading…</p>;
   if (habits.length === 0)
     return <p className="text-gray-400">No habits yet.</p>;
 
