@@ -2,9 +2,11 @@
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 // import { SessionProvider } from "next-auth/react";
-// import { redirect } from "next/navigation";
-
+// import { useRouter } from "next/navigation";
 import React from "react";
+
+import FollowingPage from "./FollowingPage";
+import AddPage from "./AddPage";
 
 interface MenuItem {
   label: string;
@@ -24,12 +26,13 @@ export default function ProfilePage() {
   const [streak, setStreak] = useState<string | null>(null);
   const [age, setAge] = useState<string | null>(null);
 
-  //const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState<"profile" | "following" | "add">(
+    "profile"
+  );
 
   useEffect(() => {
     async function fetchProfile() {
       try {
-        //Change to load in parallel later
         const [nameRes] = await Promise.all([fetch("/api/profile/name")]);
         const [streakRes] = await Promise.all([fetch("/api/habit/streak")]);
         const [ageRes] = await Promise.all([fetch("/api/profile/age")]);
@@ -42,7 +45,6 @@ export default function ProfilePage() {
       } catch (error) {
         console.error("Error fetching profile data:", error);
         setName("Unknown");
-      } finally {
       }
     }
     fetchProfile();
@@ -52,16 +54,43 @@ export default function ProfilePage() {
     { label: "My Profile", icon: "👤", badge: null },
     {
       label: "Log Out",
-      icon: "💬",
+      icon: "🚪",
       badge: null,
       onClick: Logout,
     },
-    { label: "Premium", icon: "👤", badge: null },
-    { label: "Acheivements", icon: "👤", badge: null },
-    { label: "Friends", icon: "👤", badge: null },
-    { label: "Support/Feedback", icon: "👤", badge: null },
+    { label: "Premium", icon: "⭐️", badge: null },
+    { label: "Achievements", icon: "🏆", badge: null },
+    {
+      label: "Friends",
+      icon: "👥",
+      badge: null,
+      onClick: () => setActiveTab("following"),
+    },
+    {
+      label: "Temp: Add Page",
+      icon: "💬",
+      badge: null,
+      onClick: () => setActiveTab("add"),
+    },
   ];
 
+  // if they’ve clicked Friends, just render that page
+  if (activeTab === "following") {
+    return (
+      <>
+        <FollowingPage onBack={() => setActiveTab("profile")} />;
+      </>
+    );
+  }
+  if (activeTab === "add") {
+    return (
+      <>
+        <AddPage onBack={() => setActiveTab("profile")} />;
+      </>
+    );
+  }
+
+  // otherwise show Profile UI
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
