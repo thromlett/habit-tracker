@@ -1,18 +1,19 @@
 "use client";
 import React from "react";
-import { useLoggableHabit, useLogs } from "@/hooks/";
 import { isSameDay } from "@/utils/date";
-import { HabitLog } from "@/lib/habit";
+import { HabitLog, Habit } from "@/lib/habit";
 import { CheckIcon, XIcon } from "../../../../components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-export default function HabitDash() {
+interface Props {
+  habits: Habit[];
+  logs: HabitLog[];
+}
+
+export default function HabitDash({ habits, logs }: Props) {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState<string | null>(null);
-
-  const { data: habits = [] } = useLoggableHabit();
-  const { data: logs = [] } = useLogs();
 
   function getTodaysLog(habitId: string) {
     return logs.find(
