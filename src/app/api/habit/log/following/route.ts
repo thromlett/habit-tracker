@@ -14,7 +14,22 @@ export async function GET() {
     return NextResponse.json({ error: "No user ID" }, { status: 400 });
   }
 
-  const habits = await prisma.habit.findMany();
+  const habits = await prisma.habit.findMany({
+    where: {
+      user: {
+        followers: {
+          some: { followerId: userId },
+        },
+      },
+    },
+    include: {
+      user: {
+        select: { id: true, userName: true },
+      },
+      logs: true, // if you want the HabitLog entries
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   return NextResponse.json(habits);
 }

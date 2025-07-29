@@ -1,29 +1,30 @@
 "use client";
 import React, { useState } from "react";
 import {
-  //useQuery,
   useQueryClient,
-  //QueryClient,
   QueryClientProvider,
   HydrationBoundary,
 } from "@tanstack/react-query";
 import { Habit, HabitLog } from "@/lib/habit";
 import HabitDash from "./HabitDash";
+import HabitOthers from "./HabitOthers";
 import { SessionProvider } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import TopBar from "@/components/TopBar";
-
-// Types for your habits and logs
 
 interface Props {
   initialHabits: Habit[];
   initialLoggableHabits: Habit[];
   initialLogs: HabitLog[];
+  initialFollowing: Habit[];
+  initialGlobal: Habit[];
 }
 export default function DashboardPage({
   initialHabits,
   initialLoggableHabits,
   initialLogs,
+  initialFollowing,
+  initialGlobal,
 }: Props) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -62,11 +63,18 @@ export default function DashboardPage({
                 <h1 className="text-2xl font-bold mb-4">
                   Your Followed Habits
                 </h1>
-                <HabitDash habits={initialHabits} logs={initialLogs} />
+                <HabitOthers habits={initialFollowing} logs={initialLogs} />
               </main>
             </div>
           )}
-          {currentTab === "Global" && <p>Showing global feed...</p>}
+          {currentTab === "Global" && (
+            <div className="pb-20 min-h-screen bg-gray-50">
+              <main className="max-w-md mx-auto pt-8 px-4">
+                <h1 className="text-2xl font-bold mb-4">Global Habits</h1>
+                <HabitOthers habits={initialGlobal} logs={initialLogs} />
+              </main>
+            </div>
+          )}
         </HydrationBoundary>
       </QueryClientProvider>
     </SessionProvider>
