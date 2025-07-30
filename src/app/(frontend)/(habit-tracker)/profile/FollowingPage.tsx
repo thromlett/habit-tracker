@@ -3,6 +3,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import HabitOther from "../dashboard/HabitOthers";
 import { HabitLog, Habit } from "@/lib/habit";
+import Image from "next/image";
 
 interface Friend {
   id: string;
@@ -34,7 +35,7 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
           id: u.id,
           userName: u.userName,
           followerCount: u.followerCount,
-          avatarUrl: u.avatarUrl ?? null,
+          avatarUrl: u.avatarUrl || null,
         }));
         setFriends(mapped);
         setLoading(false);
@@ -141,13 +142,15 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
             onClick={() => setSelectedFriend(f)}
             className="flex items-center px-4 py-4 border-t last:border-b cursor-pointer hover:bg-gray-50"
           >
-            {/* {f.avatarUrl && (
-              <img
+            {f.avatarUrl && (
+              <Image
                 src={f.avatarUrl}
                 alt={f.userName}
+                width={5}
+                height={5}
                 className="w-10 h-10 rounded-full object-cover"
               />
-            )} */}
+            )}
             <div className="ml-4 flex-grow">
               <p className="text-base font-medium text-gray-800">
                 {f.userName}

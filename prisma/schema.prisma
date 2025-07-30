@@ -44,6 +44,8 @@ model User {
   createdAt     DateTime?
   lastLogin     DateTime?
 
+  avatarUrl String? 
+
   //relations
   habits Habit[]
 

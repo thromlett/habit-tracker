@@ -14,9 +14,11 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.16.0",
     "@prisma/client": "^6.9.0",
     "@tanstack/react-query": "^5.81.5",
     "bcryptjs": "^3.0.2",
+    "formidable": "^3.5.4",
     "ldrs": "^1.1.7",
     "mongodb": "^6.17.0",
     "nanoid": "^5.1.5",
