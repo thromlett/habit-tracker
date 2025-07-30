@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { getServerSession } from "next-auth";
@@ -16,15 +16,35 @@ export async function GET() {
     }
     const userId = session.user.id;
 
-    const user = await prisma.follow.findMany({
-      where: { id: userId },
+    const follows = await prisma.follow.findMany({
+      where: { followerId: userId },
+      include: {
+        following: {
+          select: {
+            userName: true,
+            id: true,
+          },
+        },
+      },
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    // For each following user, get their follower count
+    const usersWithFollowerCount = await Promise.all(
+      follows.map(async (follow) => {
+        const followerCount = await prisma.follow.count({
+          where: { followingId: follow.following.id },
+        });
+        return {
+          ...follow.following,
+          followerCount,
+        };
+      })
+    );
 
-    return NextResponse.json({}, { status: 200 });
+    return NextResponse.json(
+      { following: usersWithFollowerCount },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching user name:", error);
     return NextResponse.json(
@@ -34,15 +54,16 @@ export async function GET() {
   }
 }
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user?.id) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
     const userId = session.user.id;
+    const data = await req.json();
 
-    const following = await getUserName(userId);
+    const following = await getUserName(data.name);
     if (!following) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

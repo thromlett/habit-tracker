@@ -13,24 +13,10 @@ export async function GET(
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
   const userId = session.user?.id;
-  const habit = await prisma.habit.findFirst({ where: { userId, id } });
-  return NextResponse.json(habit);
-}
+  if (!userId) {
+    return NextResponse.json({ error: "No user ID" }, { status: 400 });
+  }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await getServerSession(authOptions);
-  const { id } = await params;
-  if (!session) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-  const userId = session.user?.id;
-  const habit = await prisma.habit.findFirst({ where: { userId, id } });
-  if (!habit) {
-    return NextResponse.json({ error: "Habit not found" }, { status: 404 });
-  }
-  await prisma.habit.delete({ where: { id } });
-  return NextResponse.json({ message: "Habit deleted" });
+  const habit = await prisma.habit.findMany({ where: { userId: id } });
+  return NextResponse.json(habit);
 }

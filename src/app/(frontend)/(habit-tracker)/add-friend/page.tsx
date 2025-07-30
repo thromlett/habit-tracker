@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface Friend {
@@ -15,16 +15,61 @@ interface FollowingPageProps {
 
 export default function AddPage({ onBack }: FollowingPageProps) {
   const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Sample data; replace with real data or fetch logic
   const friends: Friend[] = [
     {
       id: "1",
-      name: "Will display friend of friends and top folled users",
+      name: "Brendan Sweet",
       avatarUrl: "/avatars/brendan.jpg",
       followers: 38,
     },
+    {
+      id: "2",
+      name: "Dean Panagopoulos",
+      avatarUrl: "/avatars/dean.jpg",
+      followers: 19,
+    },
+    {
+      id: "3",
+      name: "Gavin Turvey",
+      avatarUrl: "/avatars/gavin.jpg",
+      followers: 34,
+    },
+    {
+      id: "4",
+      name: "Jack Murray",
+      avatarUrl: "/avatars/jack.jpg",
+      followers: 7,
+    },
+    {
+      id: "5",
+      name: "Kayla Thornley",
+      avatarUrl: "/avatars/kayla.jpg",
+      followers: 2,
+    },
   ];
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/profile/follow", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: searchTerm }),
+      });
+      if (!res.ok) {
+        console.error("Search request failed", await res.text());
+      } else {
+        const data = await res.json();
+        console.log("Search response", data);
+        // TODO: update state with search results
+      }
+    } catch (error) {
+      console.error("Error during search", error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -45,6 +90,19 @@ export default function AddPage({ onBack }: FollowingPageProps) {
         </button>
       </div>
 
+      {/* Search Bar */}
+      <div className="px-4 py-2 bg-white shadow">
+        <form onSubmit={handleSearch}>
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search friends..."
+            className="w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </form>
+      </div>
+
       {/* Friends List */}
       <div className="mt-4 bg-white">
         <ul>
@@ -54,7 +112,8 @@ export default function AddPage({ onBack }: FollowingPageProps) {
               onClick={() => console.log(`Clicked ${friend.name}`)}
               className="flex items-center px-4 py-4 border-t last:border-b cursor-pointer hover:bg-gray-50"
             >
-              {/*               <img
+              {/* Uncomment when using avatars */}
+              {/* <img
                 src={friend.avatarUrl}
                 alt={friend.name}
                 className="w-10 h-10 rounded-full object-cover"

@@ -1,100 +1,164 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import HabitOther from "../dashboard/HabitOthers";
+import { HabitLog, Habit } from "@/lib/habit";
 
 interface Friend {
   id: string;
-  name: string;
-  avatarUrl: string;
-  followers: number;
+  userName: string;
+  avatarUrl?: string;
+  followerCount: number;
 }
 
-interface FollowingPageProps {
-  onBack: () => void;
-}
-
-export default function FollowingPage({ onBack }: FollowingPageProps) {
+export default function FollowingPage({ onBack }: { onBack: () => void }) {
   const router = useRouter();
+  const [friends, setFriends] = React.useState<Friend[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
-  // Sample data; replace with real data or fetch logic
-  const friends: Friend[] = [
-    {
-      id: "1",
-      name: "Brendan Sweet",
-      avatarUrl: "/avatars/brendan.jpg",
-      followers: 38,
-    },
-    {
-      id: "2",
-      name: "Dean Panagopoulos",
-      avatarUrl: "/avatars/dean.jpg",
-      followers: 19,
-    },
-    {
-      id: "3",
-      name: "Gavin Turvey",
-      avatarUrl: "/avatars/gavin.jpg",
-      followers: 34,
-    },
-    {
-      id: "4",
-      name: "Jack Murray",
-      avatarUrl: "/avatars/jack.jpg",
-      followers: 7,
-    },
-    {
-      id: "5",
-      name: "Kayla Thornley",
-      avatarUrl: "/avatars/kayla.jpg",
-      followers: 2,
-    },
-  ];
+  // new state: track which friend was clicked
+  const [selectedFriend, setSelectedFriend] = React.useState<Friend | null>(
+    null
+  );
 
+  React.useEffect(() => {
+    fetch("api/profile/follow")
+      .then((res) => {
+        if (!res.ok) throw new Error(res.statusText);
+        return res.json();
+      })
+      .then((json) => {
+        const list = Array.isArray(json.following) ? json.following : [];
+        const mapped: Friend[] = list.map((u: Friend) => ({
+          id: u.id,
+          userName: u.userName,
+          followerCount: u.followerCount,
+          avatarUrl: u.avatarUrl ?? null,
+        }));
+        setFriends(mapped);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Could not load followings");
+        setLoading(false);
+      });
+  }, []);
+
+  // 2) state for friend's habits/logs (must be before any return)
+  const [friendHabits, setFriendHabits] = React.useState<Habit[]>([]);
+  const [friendLogs, setFriendLogs] = React.useState<HabitLog[]>([]);
+  const [friendLoading, setFriendLoading] = React.useState(false);
+  const [friendError, setFriendError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (selectedFriend) {
+      setFriendLoading(true);
+      setFriendError(null);
+      Promise.all([
+        fetch(`api/habit/${selectedFriend.id}`).then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch habits");
+          return res.json();
+        }),
+        fetch(`api/habit/log/${selectedFriend.id}`).then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch logs");
+          return res.json();
+        }),
+      ])
+        .then(([habits, logs]) => {
+          setFriendHabits(habits);
+          setFriendLogs(logs);
+          setFriendLoading(false);
+        })
+        .catch((err) => {
+          setFriendError("Could not load friend's habits/logs" + err.message);
+          setFriendLoading(false);
+        });
+    }
+  }, [selectedFriend]);
+
+  // 1) while loading / error / empty remain the same
+  if (loading) return <div className="p-4 text-center">Loading…</div>;
+  if (error) return <div className="p-4 text-red-500">{error}</div>;
+  if (friends.length === 0)
+    return (
+      <div className="p-4 text-gray-600">You’re not following anyone yet.</div>
+    );
+
+  if (selectedFriend) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="flex items-center px-4 py-3 bg-white shadow">
+          <button
+            onClick={() => setSelectedFriend(null)}
+            className="text-gray-800 font-medium"
+          >
+            &larr; Back to list
+          </button>
+          <h1 className="text-lg font-semibold text-gray-800 ml-4">
+            {selectedFriend.userName}
+          </h1>
+        </div>
+        {friendLoading ? (
+          <div className="p-4 text-center">Loading friend`s habits…</div>
+        ) : friendError ? (
+          <div className="p-4 text-red-500">{friendError}</div>
+        ) : (
+          <div className="pb-20 min-h-screen bg-gray-50">
+            <main className="max-w-md mx-auto pt-8 px-4">
+              <h1 className="text-2xl font-bold mb-4">Habits</h1>
+              <HabitOther habits={friendHabits} logs={friendLogs} />
+            </main>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // 3) otherwise, render the list as before, but wire up onClick to setSelectedFriend
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-white shadow">
-        <button
-          onClick={onBack}
-          className="text-gray-800 text-base font-medium"
-        >
+        <button onClick={onBack} className="text-gray-800 font-medium">
           &larr; Back
         </button>
         <h1 className="text-lg font-semibold text-gray-800">Following</h1>
         <button
           onClick={() => router.push("/add-friend")}
-          className="text-gray-800 text-xl font-bold"
+          className="text-xl font-bold"
         >
           +
         </button>
       </div>
 
-      {/* Friends List */}
-      <div className="mt-4 bg-white">
-        <ul>
-          {friends.map((friend) => (
-            <li
-              key={friend.id}
-              onClick={() => console.log(`Clicked ${friend.name}`)}
-              className="flex items-center px-4 py-4 border-t last:border-b cursor-pointer hover:bg-gray-50"
-            >
-              {/*               <img
-                src={friend.avatarUrl}
-                alt={friend.name}
+      {/* List */}
+      <ul className="mt-4 bg-white">
+        {friends.map((f) => (
+          <li
+            key={f.id}
+            onClick={() => setSelectedFriend(f)}
+            className="flex items-center px-4 py-4 border-t last:border-b cursor-pointer hover:bg-gray-50"
+          >
+            {/* {f.avatarUrl && (
+              <img
+                src={f.avatarUrl}
+                alt={f.userName}
                 className="w-10 h-10 rounded-full object-cover"
-              /> */}
-              <div className="ml-4 flex-grow">
-                <p className="text-base font-medium text-gray-800">
-                  {friend.name}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {friend.followers} followers
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
+              />
+            )} */}
+            <div className="ml-4 flex-grow">
+              <p className="text-base font-medium text-gray-800">
+                {f.userName}
+              </p>
+              <p className="text-sm text-gray-600">
+                {f.followerCount} follower{f.followerCount === 1 ? "" : "s"}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
-import { prisma } from "../../../../../lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
@@ -19,9 +19,9 @@ export async function GET(
     return NextResponse.json({ error: "No user ID" }, { status: 400 });
   }
 
-  const logs = await prisma.habitLog.findFirst({
+  const logs = await prisma.habitLog.findMany({
     where: {
-      habit: { userId, id }, //relation filter
+      habit: { userId: id }, //relation filter
     },
     include: { habit: true }, //include habit details
   });
@@ -29,33 +29,4 @@ export async function GET(
   if (!logs)
     return NextResponse.json({ error: "Habit log not found" }, { status: 404 });
   return NextResponse.json(logs);
-}
-
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const session = await getServerSession(authOptions);
-  const { id } = await params;
-
-  if (!session) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-  const userId = session.user?.id;
-  if (!userId) {
-    return NextResponse.json({ error: "No user ID" }, { status: 400 });
-  }
-
-  const log = await prisma.habitLog.findFirst({
-    where: {
-      habit: { userId, id }, //relation filter
-    },
-  });
-
-  if (!log) {
-    return NextResponse.json({ error: "Habit log not found" }, { status: 404 });
-  }
-
-  await prisma.habitLog.delete({ where: { id: log.id } });
-  return NextResponse.json({ message: "Habit log deleted" });
 }
