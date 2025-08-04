@@ -1,45 +1,56 @@
-// utils/parseHabitLogs.ts
+// src/utils/date.ts
 
-export interface HabitLog {
-  id: string;
-  habitId: string;
-  completed: boolean;
-  timeStamp: string; // ISO string, e.g. "2025-08-01T18:20:30.108Z"
-  // …we don’t actually use the inner `habit` object here
+/**
+ * Formats any JS-parsable UTC timestamp into YYYY/MM/DD.
+ *
+ * @param timestamp A number (ms since epoch), ISO string, or Date instance
+ * @returns         A date string like "2025/08/04"
+ */
+export function formatUTCDate(timestamp: number | string | Date): string {
+  const date = new Date(timestamp);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${year}/${month}/${day}`;
 }
 
 /**
- * Given a list of habit‐completion logs, count how many times
- * the user logged in each day of the given year/month.
- *
- * @param logs – array of HabitLog
- * @param year – full year, e.g. 2025
- * @param month – 1–12 for Jan–Dec
- * @returns a map where keys are day numbers (1–31) and values are counts
+ * Log entry shape (you can expand this if you want more fields)
  */
-export function parseHabitLogsToHeatmapData(
-  logs: HabitLog[],
-  year: number,
-  month: number
-): Record<number, number> {
-  const counts: Record<number, number> = {};
+interface LogEntry {
+  timeStamp: string;
+  completed: boolean;
+}
 
-  for (const log of logs) {
-    // only count successful completions
-    if (!log.completed) continue;
+/**
+ * One heat-map data point
+ */
+export interface HeatMapValue {
+  date: string;
+  count: number;
+}
 
-    const d = new Date(log.timeStamp);
-    const logYear = d.getUTCFullYear();
-    const logMonth = d.getUTCMonth() + 1;
-    // if you prefer local‐timezone grouping, replace the two lines above with:
-    // const logYear  = d.getFullYear();
-    // const logMonth = d.getMonth() + 1;
+/**
+ * Convert an array of timestamped logs into HeatMap-ready data:
+ *  - only counts entries where `completed === true`
+ *  - groups them by UTC day (YYYY/MM/DD)
+ *  - returns a sorted array of { date, count }
+ *
+ * @param logs Array of objects with at least { timeStamp, completed }
+ */
+export function toHeatMapValues(logs: LogEntry[]): HeatMapValue[] {
+  const counts: Record<string, number> = {};
 
-    if (logYear === year && logMonth === month) {
-      const day = d.getUTCDate(); // or d.getDate() for local
-      counts[day] = (counts[day] || 0) + 1;
-    }
+  for (const { timeStamp, completed } of logs) {
+    if (!completed) continue;
+    const day = formatUTCDate(timeStamp);
+    counts[day] = (counts[day] || 0) + 1;
   }
 
-  return counts;
+  return (
+    Object.entries(counts)
+      // sort by date string (YYYY/MM/DD lex order works)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, count]) => ({ date, count }))
+  );
 }

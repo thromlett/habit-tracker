@@ -5,6 +5,7 @@ import HabitOther from "../dashboard/HabitOthers";
 import { HabitLog, Habit } from "@/lib/habit";
 import Image from "next/image";
 import HamburgerMenu, { MenuItem } from "@/components/HamburgerMenu";
+import HeatMapComponent from "@/components/HeatMapComponent";
 
 interface Friend {
   id: string;
@@ -148,6 +149,8 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
         ) : (
           <div className="pb-20 min-h-screen bg-gray-50">
             <main className="max-w-md mx-auto pt-8 px-4">
+              <HeatMapComponent logs={friendLogs} />
+
               <h1 className="text-2xl font-bold mb-4">Habits</h1>
               <HabitOther habits={friendHabits} logs={friendLogs} />
             </main>
