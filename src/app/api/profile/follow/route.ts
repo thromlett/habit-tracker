@@ -86,27 +86,41 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user?.id) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
     const userId = session.user.id;
+    const data = await req.json();
 
-    const user = await prisma.follow.delete({
-      where: { id: userId },
+    const following = await getUserName(data.name);
+    if (!following) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const deletedFollow = await prisma.follow.delete({
+      where: {
+        followerId_followingId: {
+          followerId: userId,
+          followingId: following,
+        },
+      },
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!deletedFollow) {
+      return NextResponse.json(
+        { error: "Follow relationship not found" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({}, { status: 200 });
   } catch (error) {
-    console.error("Error deleting user:", error);
+    console.error("Error deleting follow relationship:", error);
     return NextResponse.json(
-      { error: "Failed to delete user" },
+      { error: "Failed to delete follow relationship" },
       { status: 500 }
     );
   }

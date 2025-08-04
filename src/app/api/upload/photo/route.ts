@@ -1,4 +1,4 @@
-// app/api/upload/route.ts
+// Deprecated Upload API: doess not save url to DB
 import { PrismaClient } from "@prisma/client";
 import { Storage } from "@google-cloud/storage";
 

@@ -11,6 +11,8 @@ import HabitOthers from "./HabitOthers";
 import { SessionProvider } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import TopBar from "@/components/TopBar";
+import { HeatmapCalendar } from "@/components/Heatmap";
+import { parseHabitLogsToHeatmapData } from "@/utils/parseHabitLog";
 
 interface Props {
   initialHabits: Habit[];
@@ -52,6 +54,11 @@ export default function DashboardPage({
           {currentTab === "You" && (
             <div className="pb-20 min-h-screen bg-gray-50">
               <main className="max-w-md mx-auto pt-8 px-4">
+                <HeatmapCalendar
+                  year={2025}
+                  month={8}
+                  data={parseHabitLogsToHeatmapData(initialLogs, 2025, 8)}
+                />
                 <h1 className="text-2xl font-bold mb-4">Your Habits</h1>
                 <HabitDash habits={initialLoggableHabits} logs={initialLogs} />
               </main>

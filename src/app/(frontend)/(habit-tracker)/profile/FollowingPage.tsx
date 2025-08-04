@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import HabitOther from "../dashboard/HabitOthers";
 import { HabitLog, Habit } from "@/lib/habit";
 import Image from "next/image";
+import HamburgerMenu, { MenuItem } from "@/components/HamburgerMenu";
 
 interface Friend {
   id: string;
@@ -84,8 +85,43 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
   if (error) return <div className="p-4 text-red-500">{error}</div>;
   if (friends.length === 0)
     return (
-      <div className="p-4 text-gray-600">You’re not following anyone yet.</div>
+      <div className="min-h-screen bg-gray-50">
+        <div className="flex items-center justify-between px-4 py-3 bg-white shadow">
+          <button onClick={onBack} className="text-gray-800 font-medium">
+            &larr; Back
+          </button>
+          <h1 className="text-lg font-semibold text-gray-800">Following</h1>
+          <button
+            onClick={() => router.push("/add-friend")}
+            className="text-xl font-bold"
+          >
+            +
+          </button>
+        </div>
+        <div className="p-4 text-center">Youre not following anyone yet</div>
+      </div>
     );
+
+  async function onDelete() {
+    if (!selectedFriend) return;
+    try {
+      const res = await fetch("api/profile/follow", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: selectedFriend.userName }),
+      });
+      if (!res.ok) throw new Error("Failed to unfollow");
+      // Remove friend from list and go back to list view
+      setFriends((prev) => prev.filter((f) => f.id !== selectedFriend.id));
+      setSelectedFriend(null);
+    } catch (err) {
+      alert(err + "Could not unfollow this user.");
+    }
+  }
+
+  const menuItems: MenuItem[] = [
+    { label: "Unfollow Profile", onClick: () => onDelete() },
+  ];
 
   if (selectedFriend) {
     return (
@@ -97,9 +133,13 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
           >
             &larr; Back to list
           </button>
+
           <h1 className="text-lg font-semibold text-gray-800 ml-4">
             {selectedFriend.userName}
           </h1>
+          <div className="ml-auto">
+            <HamburgerMenu items={menuItems} widthClass="w-72" />
+          </div>
         </div>
         {friendLoading ? (
           <div className="p-4 text-center">Loading friend`s habits…</div>
