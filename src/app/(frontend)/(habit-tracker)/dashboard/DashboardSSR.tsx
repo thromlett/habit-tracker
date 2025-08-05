@@ -1,7 +1,7 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import HabitDashboard from "@/app/(frontend)/(habit-tracker)/dashboard/HabitDashboard";
+import DashboardClient from "@/app/(frontend)/(habit-tracker)/dashboard/DashboardClient";
 import {
   getHabits,
   getLoggableHabits,
@@ -26,10 +26,10 @@ export default async function DashboardSSR() {
   ]);
 
   return (
-    <HabitDashboard
+    <DashboardClient
       initialHabits={habits}
-      initialLoggableHabits={loggableHabits}
       initialLogs={logs}
+      initialLoggableHabits={loggableHabits}
       initialFollowing={following}
       initialGlobal={global}
     />

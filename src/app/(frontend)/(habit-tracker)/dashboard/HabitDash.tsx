@@ -54,13 +54,11 @@ export default function HabitDash({ habits, logs }: Props) {
     <div className="space-y-4">
       {habits.map((habit) => {
         const log = getTodaysLog(habit.id);
-        const isLogged = !!log;
         return (
           <div
             key={habit.id}
             className={
-              "bg-white rounded-xl p-4 shadow flex items-center justify-between" +
-              (isLogged ? " opacity-60 pointer-events-none grayscale" : "")
+              "bg-white rounded-xl p-4 shadow flex items-center justify-between"
             }
           >
             <div>
