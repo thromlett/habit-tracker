@@ -32,14 +32,6 @@ export default function DashboardPage({
 
   return (
     <SessionProvider>
-      <TopBar
-        tabs={["You", "Following", "Global"]}
-        selectedTab={currentTab}
-        onSelectTab={setCurrentTab}
-        notificationCount={69}
-        onProfileClick={() => router.push("/profile")}
-        onNotificationClick={() => router.push("/notifications")}
-      />
       <QueryClientProvider client={queryClient}>
         <HydrationBoundary
           state={{
@@ -49,6 +41,14 @@ export default function DashboardPage({
             ],
           }}
         >
+          <TopBar
+            tabs={["You", "Following", "Global"]}
+            selectedTab={currentTab}
+            onSelectTab={setCurrentTab}
+            notificationCount={69}
+            onProfileClick={() => router.push("/profile")}
+            onNotificationClick={() => router.push("/notifications")}
+          />
           {currentTab === "You" && (
             <div className="pb-20 min-h-screen bg-gray-50">
               <main className="max-w-md mx-auto pt-8 px-4">

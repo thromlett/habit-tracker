@@ -13,7 +13,7 @@ export default function HeatMapComponent({ logs }: { logs: HabitLog[] }) {
           value={toHeatMapValues(logs)}
           startDate={(() => {
             const date = new Date();
-            date.setMonth(date.getMonth() - 1);
+            date.setMonth(date.getMonth() - 3);
             return date;
           })()}
           endDate={(() => {
