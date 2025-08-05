@@ -11,9 +11,17 @@ export default function HeatMapComponent({ logs }: { logs: HabitLog[] }) {
       <div className="min-w-max">
         <HeatMap
           value={toHeatMapValues(logs)}
-          startDate={new Date("2025/01/01")}
-          endDate={new Date("2025/12/31")}
-          width={720}
+          startDate={(() => {
+            const date = new Date();
+            date.setMonth(date.getMonth() - 1);
+            return date;
+          })()}
+          endDate={(() => {
+            const date = new Date();
+            date.setDate(date.getDate() + 7);
+            return date;
+          })()}
+          //width={720}
           className="inline-block"
         />
       </div>

@@ -4,6 +4,7 @@ import { signOut } from "next-auth/react";
 // import { SessionProvider } from "next-auth/react";
 // import { useRouter } from "next/navigation";
 import React from "react";
+import Image from "next/image";
 
 import FollowingPage from "./FollowingPage";
 import AddPage from "./AddPage";
@@ -25,6 +26,7 @@ export default function ProfilePage() {
   const [userName, setName] = useState<string | null>(null);
   const [streak, setStreak] = useState<string | null>(null);
   const [age, setAge] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   const [activeTab, setActiveTab] = useState<"profile" | "following" | "add">(
     "profile"
@@ -36,12 +38,15 @@ export default function ProfilePage() {
         const [nameRes] = await Promise.all([fetch("/api/profile/name")]);
         const [streakRes] = await Promise.all([fetch("/api/habit/streak")]);
         const [ageRes] = await Promise.all([fetch("/api/profile/age")]);
+        const [avatarRes] = await Promise.all([fetch("/api/profile")]);
         const nameData = await nameRes.json();
         const streakData = await streakRes.json();
         const ageData = await ageRes.json();
+        const avatarData = await avatarRes.json();
         setName(nameData.userName || "");
         setStreak(streakData.streak);
         setAge(ageData.accountAge || "0");
+        setAvatarUrl(avatarData.avatarUrl || null);
       } catch (error) {
         console.error("Error fetching profile data:", error);
         setName("Unknown");
@@ -100,7 +105,14 @@ export default function ProfilePage() {
           <span className="text-lg font-bold text-gray-800">{streak}</span>
         </div>
         <div className="flex flex-col items-center">
-          <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center" />
+          {/* <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center" /> */}
+          <Image
+            src={avatarUrl || "/components/avatars/default-avatar.jpg"}
+            alt={userName || ""}
+            width={5}
+            height={5}
+            className="w-16 h-16 rounded-full object-cover"
+          />
           <span className="mt-2 text-lg font-semibold text-gray-800">
             {userName}
           </span>

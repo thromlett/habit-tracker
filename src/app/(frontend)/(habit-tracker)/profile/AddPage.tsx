@@ -20,8 +20,8 @@ export default function AddPage({ onBack }: FollowingPageProps) {
   const friends: Friend[] = [
     {
       id: "1",
-      name: "Will display friend of friends and top folled users",
-      avatarUrl: "/avatars/brendan.jpg",
+      name: "Will display friend of friends and top followed users",
+      avatarUrl: "/avatars/mkmo.jpg",
       followers: 38,
     },
   ];
