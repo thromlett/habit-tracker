@@ -13,7 +13,7 @@ interface FollowingPageProps {
   onBack: () => void;
 }
 
-export default function AddPage({ onBack }: FollowingPageProps) {
+export default function AddFriend({ onBack }: FollowingPageProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -21,33 +21,9 @@ export default function AddPage({ onBack }: FollowingPageProps) {
   const friends: Friend[] = [
     {
       id: "1",
-      name: "Brendan Sweet",
-      avatarUrl: "/avatars/brendan.jpg",
+      name: "Bruh burh",
+      avatarUrl: "/avatars/bruh.jpg",
       followers: 38,
-    },
-    {
-      id: "2",
-      name: "Dean Panagopoulos",
-      avatarUrl: "/avatars/dean.jpg",
-      followers: 19,
-    },
-    {
-      id: "3",
-      name: "Gavin Turvey",
-      avatarUrl: "/avatars/gavin.jpg",
-      followers: 34,
-    },
-    {
-      id: "4",
-      name: "Jack Murray",
-      avatarUrl: "/avatars/jack.jpg",
-      followers: 7,
-    },
-    {
-      id: "5",
-      name: "Kayla Thornley",
-      avatarUrl: "/avatars/kayla.jpg",
-      followers: 2,
     },
   ];
 

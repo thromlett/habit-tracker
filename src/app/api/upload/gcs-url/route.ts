@@ -1,6 +1,6 @@
 import { Storage } from "@google-cloud/storage";
 import path from "path";
-import fs from "fs";
+//import fs from "fs"; needed for consoleLog debug
 
 export const runtime = "nodejs";
 
@@ -11,7 +11,7 @@ const keyFile = path.join(
 );
 
 // Optional debug to confirm the SDK finds your key:
-console.log("🔑 keyFile path:", keyFile, "exists?", fs.existsSync(keyFile));
+//console.log("🔑 keyFile path:", keyFile, "exists?", fs.existsSync(keyFile));
 
 const storage = new Storage({
   projectId: process.env.GOOGLE_CLOUD_PROJECT,

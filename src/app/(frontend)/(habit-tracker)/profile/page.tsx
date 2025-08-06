@@ -7,7 +7,7 @@ import React from "react";
 import Image from "next/image";
 
 import FollowingPage from "./FollowingPage";
-import AddPage from "./AddPage";
+import AddFriend from "./AddFriend";
 
 interface MenuItem {
   label: string;
@@ -90,7 +90,7 @@ export default function ProfilePage() {
   if (activeTab === "add") {
     return (
       <>
-        <AddPage onBack={() => setActiveTab("profile")} />;
+        <AddFriend onBack={() => setActiveTab("profile")} />;
       </>
     );
   }
