@@ -1,14 +1,11 @@
-import { NextResponse, NextRequest } from "next/server";
-import { prisma } from "../../../../lib/prisma";
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { getServerSession } from "next-auth";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET() {
+  // Authenticate user
   const session = await getServerSession(authOptions);
-  const { id } = await params;
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
@@ -17,6 +14,7 @@ export async function GET(
     return NextResponse.json({ error: "No user ID" }, { status: 400 });
   }
 
-  const habit = await prisma.habit.findMany({ where: { userId: id } });
-  return NextResponse.json(habit);
+  const habits = await prisma.habit.findMany();
+
+  return NextResponse.json(habits);
 }

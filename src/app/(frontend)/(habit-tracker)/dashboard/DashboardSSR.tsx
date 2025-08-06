@@ -1,8 +1,14 @@
 import React from "react";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import HabitDashboard from "@/components/pages/HabitDashboard";
-import { getLoggableHabits, getLogs } from "@/lib/habit-server";
+import DashboardClient from "@/app/(frontend)/(habit-tracker)/dashboard/DashboardClient";
+import {
+  getHabits,
+  getLoggableHabits,
+  getLogs,
+  getFollowingHabits,
+  getGlobalHabits,
+} from "@/lib/habit-server";
 import type { HabitLog, Habit } from "@/lib/habit";
 
 export default async function DashboardSSR() {
@@ -11,10 +17,21 @@ export default async function DashboardSSR() {
     redirect("/login");
   }
 
-  const [habits, logs] = await Promise.all([
+  const [habits, loggableHabits, logs, following, global] = await Promise.all([
+    getHabits() as Promise<Habit[]>,
     getLoggableHabits() as Promise<Habit[]>,
     getLogs() as Promise<HabitLog[]>,
+    getFollowingHabits() as Promise<Habit[]>,
+    getGlobalHabits() as Promise<Habit[]>,
   ]);
 
-  return <HabitDashboard initialHabits={habits} initialLogs={logs} />;
+  return (
+    <DashboardClient
+      initialHabits={habits}
+      initialLogs={logs}
+      initialLoggableHabits={loggableHabits}
+      initialFollowing={following}
+      initialGlobal={global}
+    />
+  );
 }

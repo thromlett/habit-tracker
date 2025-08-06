@@ -1,5 +1,5 @@
 "use client";
-import BottomBar from "./BottomBar";
+import HeatMapComponent from "@/components/HeatMapComponent";
 
 type Habit = {
   id: string;
@@ -128,6 +128,7 @@ export default function HabitLogsView({
           {DeleteIcon}
         </button>
       </div>
+      <HeatMapComponent logs={logs} />
       <div className="mb-2 font-semibold">
         All Logs for <q>{habit.name}</q>
       </div>
@@ -149,7 +150,6 @@ export default function HabitLogsView({
           ))}
         </ul>
       )}
-      <BottomBar />
     </div>
   );
 }

@@ -36,7 +36,7 @@ model PasswordResetToken {
 
 model User {
   id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  userName String
+  userName String   @unique
   email    String   @unique
   password String
   role     Role     @default(USER)
@@ -44,8 +44,13 @@ model User {
   createdAt     DateTime?
   lastLogin     DateTime?
 
+  avatarUrl String? 
+
   //relations
   habits Habit[]
+
+  following  Follow[] @relation("userFollowing")
+  followers  Follow[] @relation("userFollowers")
 }
 
 model Habit {
@@ -79,4 +84,21 @@ model HabitLog {
 enum Disposition{
   GOOD
   BAD
+}
+
+model Follow {
+  id           String   @id @map("_id") @default(auto()) @db.ObjectId
+  // who clicked “follow”
+  follower     User     @relation("userFollowing", fields: [followerId], references: [id])
+  followerId   String   @db.ObjectId
+
+  // who is being followed
+  following    User     @relation("userFollowers", fields: [followingId], references: [id])
+  followingId  String   @db.ObjectId
+
+  createdAt    DateTime @default(now())
+
+  @@unique([followerId, followingId])   // prevent duplicates
+  @@index([followingId])                // fast “who follows me?”
+  @@index([followerId])                 // fast “who I follow?”
 }

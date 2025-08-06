@@ -7,9 +7,8 @@ import {
   HydrationBoundary,
 } from "@tanstack/react-query";
 import { Habit, HabitLog } from "@/lib/habit";
-//import { useHabits, useLogs } from "@/hooks/";
-import HabitList from "../HabitList";
-import HabitLogView from "../HabitLogView";
+import HabitList from "./HabitList";
+import HabitLogView from "./HabitLogView";
 import { SessionProvider } from "next-auth/react";
 
 interface Props {

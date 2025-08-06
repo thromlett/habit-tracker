@@ -1,18 +1,19 @@
 "use client";
 import React from "react";
-import { useLoggableHabit, useLogs } from "@/hooks/";
 import { isSameDay } from "@/utils/date";
-import { HabitLog } from "@/lib/habit";
-import { CheckIcon, XIcon } from "./svgs/icons";
+import { HabitLog, Habit } from "@/lib/habit";
+import { BellIcon } from "@/components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-export default function HabitDash() {
+interface Props {
+  habits: Habit[];
+  logs: HabitLog[];
+}
+
+export default function HabitOthers({ habits, logs }: Props) {
   const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState<string | null>(null);
-
-  const { data: habits = [] } = useLoggableHabit();
-  const { data: logs = [] } = useLogs();
 
   function getTodaysLog(habitId: string) {
     return logs.find(
@@ -82,29 +83,14 @@ export default function HabitDash() {
                 className={`rounded-full p-2 text-2xl border ${
                   log
                     ? log.completed
-                      ? "bg-green-100 text-green-600 border-green-400"
+                      ? "bg-blue-100 text-blue-600 border-blue-400"
                       : "bg-gray-100 text-gray-400 border-gray-300"
-                    : "hover:bg-green-100 hover:text-green-700 border-green-300"
+                    : "hover:bg-blue-100 hover:text-blue-700 border-blue-300"
                 }`}
                 disabled={!!log || submitting === habit.id}
                 onClick={() => handleLog(habit.id, true)}
               >
-                {CheckIcon}
-              </button>
-
-              <button
-                aria-label="Not accomplished"
-                className={`rounded-full p-2 text-2xl border ${
-                  log
-                    ? !log.completed
-                      ? "bg-red-100 text-red-600 border-red-400"
-                      : "bg-gray-100 text-gray-400 border-gray-300"
-                    : "hover:bg-red-100 hover:text-red-700 border-red-300"
-                }`}
-                disabled={!!log || submitting === habit.id}
-                onClick={() => handleLog(habit.id, false)}
-              >
-                {XIcon}
+                {BellIcon}
               </button>
             </div>
           </div>

@@ -14,7 +14,6 @@ async function fetchWithSession<T>(path: string): Promise<T> {
   const origin = `${proto}://${host}`;
 
   const res = await fetch(`${origin}${path}`, {
-
     cache: "no-store",
     headers: { cookie: cookieHeader },
   });
@@ -22,7 +21,6 @@ async function fetchWithSession<T>(path: string): Promise<T> {
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Fetch error (${res.status}) for ${path}: ${text}`);
-
   }
   return res.json();
 }
@@ -37,4 +35,12 @@ export function getLoggableHabits() {
 
 export function getLogs() {
   return fetchWithSession("/api/habit/log");
+}
+
+export function getFollowingHabits() {
+  return fetchWithSession("/api/habit/following");
+}
+
+export function getGlobalHabits() {
+  return fetchWithSession("/api/habit/global");
 }
