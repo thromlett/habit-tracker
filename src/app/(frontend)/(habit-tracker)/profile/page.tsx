@@ -63,8 +63,8 @@ export default function ProfilePage() {
       badge: null,
       onClick: Logout,
     },
-    { label: "Premium", icon: "⭐️", badge: null },
-    { label: "Achievements", icon: "🏆", badge: null },
+    { label: "Premium", icon: "⭐️", badge: "WIP" },
+    { label: "Achievements", icon: "🏆", badge: "WIP" },
     {
       label: "Friends",
       icon: "👥",

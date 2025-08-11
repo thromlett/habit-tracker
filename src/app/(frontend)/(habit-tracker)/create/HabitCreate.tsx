@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { useCreateHabit } from "@/hooks/useCreateHabit";
 import { CreateHabitBody, Schedule } from "@/lib/habit";
+import { HapticButton } from "@/components/HapticButton";
 
 export default function CreatePageClient() {
   const [queryClient] = useState(() => new QueryClient());
@@ -213,13 +214,14 @@ function CreateHabitForm() {
             />
           </div>
 
-          <button
+          <HapticButton
             type="submit"
             disabled={isPending}
             className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-lg shadow hover:bg-blue-700 transition"
+            haptic="impactHeavy"
           >
             {isPending ? "Adding..." : "Add Habit"}
-          </button>
+          </HapticButton>
 
           {error && <p className="text-red-500">{error.message}</p>}
           {isSuccess && <p className="text-green-600">Habit created!</p>}

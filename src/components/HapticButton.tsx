@@ -2,7 +2,12 @@
 import React from "react";
 import { NativeBridge } from "@/utils/ReactNativeBridge";
 
-type HapticEffect = "impactLight" | "impactMedium" | "impactHeavy" | string;
+type HapticEffect =
+  | "impactLight"
+  | "impactMedium"
+  | "impactHeavy"
+  | "success"
+  | string;
 
 type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   haptic?: HapticEffect | false; // false = disable for this instance
