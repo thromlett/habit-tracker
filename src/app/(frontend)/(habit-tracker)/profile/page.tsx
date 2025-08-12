@@ -7,7 +7,6 @@ import React from "react";
 import Image from "next/image";
 
 import FollowingPage from "./FollowingPage";
-import AddFriend from "./AddFriend";
 
 interface MenuItem {
   label: string;
@@ -71,12 +70,6 @@ export default function ProfilePage() {
       badge: null,
       onClick: () => setActiveTab("following"),
     },
-    {
-      label: "Temp: Add Page",
-      icon: "💬",
-      badge: null,
-      onClick: () => setActiveTab("add"),
-    },
   ];
 
   // if they’ve clicked Friends, just render that page
@@ -84,13 +77,6 @@ export default function ProfilePage() {
     return (
       <>
         <FollowingPage onBack={() => setActiveTab("profile")} />;
-      </>
-    );
-  }
-  if (activeTab === "add") {
-    return (
-      <>
-        <AddFriend onBack={() => setActiveTab("profile")} />;
       </>
     );
   }
