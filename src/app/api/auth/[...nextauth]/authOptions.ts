@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "../../../../lib/prisma";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -16,7 +17,7 @@ const authorizeEmail = async (credentials: Credentials | undefined) => {
   if (!user) return null;
   const isValidPassword = await bcrypt.compare(
     credentials?.password || "",
-    user.password
+    user.password || ""
   );
   if (!isValidPassword) return null;
   return {
@@ -35,7 +36,20 @@ const emailAuthorizationProvider = CredentialsProvider({
   authorize: authorizeEmail,
 });
 
+const CustomAdapter = (p: typeof prisma) => {
+  const base = PrismaAdapter(p);
+  return {
+    ...base,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async createUser(data: any) {
+      const userName = data.userName ?? data.name ?? null;
+      return base.createUser({ ...data, userName });
+    },
+  };
+};
+
 export const authOptions: NextAuthOptions = {
+  adapter: CustomAdapter(prisma),
   providers: [
     emailAuthorizationProvider,
     GoogleProvider({

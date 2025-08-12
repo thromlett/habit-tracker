@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
   await prisma.user.update({
     where: { id: userId },
-    data: { avatarUrl: imageUrl },
+    data: { image: imageUrl },
   });
 
   return new Response(null, { status: 204 });

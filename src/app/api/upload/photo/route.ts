@@ -40,7 +40,7 @@ export async function POST(req: Request) {
   // 6. Save the URL in MongoDB via Prisma
   await prisma.user.update({
     where: { id: userId },
-    data: { avatarUrl: publicUrl },
+    data: { image: publicUrl },
   });
 
   return new Response(JSON.stringify({ imageUrl: publicUrl }), {

@@ -3,9 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-//import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple, FaFacebookF } from "react-icons/fa";
+//import { FaApple, FaFacebookF } from "react-icons/fa";
 
 export default function SignUpPage() {
   const [form, setForm] = useState({
@@ -200,7 +199,7 @@ export default function SignUpPage() {
           >
             <FcGoogle size={22} />
           </button>
-          <button
+          {/* <button
             className="p-3 rounded-xl border border-gray-200 hover:bg-gray-100 transition"
             type="button"
             onClick={() => signIn("apple", { callbackUrl: "/" })}
@@ -213,7 +212,7 @@ export default function SignUpPage() {
             onClick={() => signIn("facebook", { callbackUrl: "/" })}
           >
             <FaFacebookF size={22} className="text-blue-600" />
-          </button>
+          </button> */}
         </div>
         {/* Already have account */}
         <p className="text-center text-gray-500">
