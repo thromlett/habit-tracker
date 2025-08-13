@@ -5,6 +5,7 @@ import { HabitLog, Habit } from "@/lib/habit";
 import { CheckIcon, XIcon } from "../../../../components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { HapticButton } from "@/components/HapticButton";
 
 interface Props {
   habits: Habit[];
@@ -76,7 +77,7 @@ export default function HabitDash({ habits, logs }: Props) {
             </div>
 
             <div className="flex gap-2 ml-4">
-              <button
+              <HapticButton
                 aria-label="Accomplished"
                 className={`rounded-full p-2 text-2xl border ${
                   log
@@ -87,11 +88,12 @@ export default function HabitDash({ habits, logs }: Props) {
                 }`}
                 disabled={!!log || submitting === habit.id}
                 onClick={() => handleLog(habit.id, true)}
+                haptic="success"
               >
                 {CheckIcon}
-              </button>
+              </HapticButton>
 
-              <button
+              <HapticButton
                 aria-label="Not accomplished"
                 className={`rounded-full p-2 text-2xl border ${
                   log
@@ -102,9 +104,10 @@ export default function HabitDash({ habits, logs }: Props) {
                 }`}
                 disabled={!!log || submitting === habit.id}
                 onClick={() => handleLog(habit.id, false)}
+                haptic="success"
               >
                 {XIcon}
-              </button>
+              </HapticButton>
             </div>
           </div>
         );

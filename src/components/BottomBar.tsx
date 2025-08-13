@@ -3,13 +3,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHome, FiList, FiPlusCircle, FiSearch, FiUser } from "react-icons/fi";
+import { FiHome, FiList, FiPlusCircle, FiUser } from "react-icons/fi";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: <FiHome /> },
   { href: "/logger", label: "Logger", icon: <FiList /> },
   { href: "/create", label: "Create", icon: <FiPlusCircle /> },
-  { href: "/analytics", label: "Analytics", icon: <FiSearch /> },
   { href: "/profile", label: "Profile", icon: <FiUser /> },
 ];
 

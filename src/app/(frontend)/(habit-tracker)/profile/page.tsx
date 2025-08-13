@@ -1,13 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
-// import { SessionProvider } from "next-auth/react";
-// import { useRouter } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 
 import FollowingPage from "./FollowingPage";
-import AddFriend from "./AddFriend";
+
+import BottomBar from "@/components/BottomBar";
 
 interface MenuItem {
   label: string;
@@ -56,26 +55,19 @@ export default function ProfilePage() {
   }, []);
 
   const menuItems: MenuItem[] = [
-    { label: "My Profile", icon: "👤", badge: null },
-    {
-      label: "Log Out",
-      icon: "🚪",
-      badge: null,
-      onClick: Logout,
-    },
-    { label: "Premium", icon: "⭐️", badge: null },
-    { label: "Achievements", icon: "🏆", badge: null },
     {
       label: "Friends",
       icon: "👥",
       badge: null,
       onClick: () => setActiveTab("following"),
     },
+    { label: "Achievements", icon: "🏆", badge: "WIP" },
+
     {
-      label: "Temp: Add Page",
-      icon: "💬",
+      label: "Log Out",
+      icon: "🚪",
       badge: null,
-      onClick: () => setActiveTab("add"),
+      onClick: Logout,
     },
   ];
 
@@ -84,13 +76,7 @@ export default function ProfilePage() {
     return (
       <>
         <FollowingPage onBack={() => setActiveTab("profile")} />;
-      </>
-    );
-  }
-  if (activeTab === "add") {
-    return (
-      <>
-        <AddFriend onBack={() => setActiveTab("profile")} />;
+        <BottomBar />
       </>
     );
   }
@@ -99,25 +85,32 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white shadow">
-        <div className="flex flex-col items-start">
+      <div className="grid grid-cols-3 items-center px-4 py-3 bg-white shadow">
+        {/* left header */}
+        <div className="flex flex-col items-start justify-self-start">
           <span className="text-sm font-medium text-gray-600">Streak</span>
           <span className="text-lg font-bold text-gray-800">{streak}</span>
         </div>
-        <div className="flex flex-col items-center">
-          {/* <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center" /> */}
+
+        {/* center header */}
+        <div className="flex flex-col items-center justify-self-center">
           <Image
-            src={avatarUrl || "/components/avatars/default-avatar.jpg"}
+            src={
+              avatarUrl && avatarUrl.trim() !== "" ? avatarUrl : "/Sin_cara.png"
+            }
             alt={userName || ""}
-            width={5}
-            height={5}
+            width={64} //This is pixels not size
+            height={64}
             className="w-16 h-16 rounded-full object-cover"
+            onError={() => setAvatarUrl(null)}
           />
           <span className="mt-2 text-lg font-semibold text-gray-800">
             {userName}
           </span>
         </div>
-        <div className="flex flex-col items-end">
+
+        {/* right header */}
+        <div className="flex flex-col items-end justify-self-end text-right">
           <span className="text-sm font-medium text-gray-600">
             Days Tracking
           </span>
@@ -150,6 +143,7 @@ export default function ProfilePage() {
           ))}
         </ul>
       </div>
+      <BottomBar />
     </div>
   );
 }

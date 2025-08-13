@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
-import { useRouter } from "next/navigation";
 import HabitOther from "../dashboard/HabitOthers";
 import { HabitLog, Habit } from "@/lib/habit";
 import Image from "next/image";
 import HamburgerMenu, { MenuItem } from "@/components/HamburgerMenu";
 import HeatMapComponent from "@/components/HeatMapComponent";
+import AddFriend from "./AddFriend";
 
 interface Friend {
   id: string;
@@ -15,15 +15,15 @@ interface Friend {
 }
 
 export default function FollowingPage({ onBack }: { onBack: () => void }) {
-  const router = useRouter();
   const [friends, setFriends] = React.useState<Friend[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  // new state: track which friend was clicked
   const [selectedFriend, setSelectedFriend] = React.useState<Friend | null>(
     null
   );
+
+  const [showAddFriend, setShowAddFriend] = React.useState(false);
 
   React.useEffect(() => {
     fetch("api/profile/follow")
@@ -33,11 +33,12 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
       })
       .then((json) => {
         const list = Array.isArray(json.following) ? json.following : [];
-        const mapped: Friend[] = list.map((u: Friend) => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mapped: Friend[] = list.map((u: any) => ({
           id: u.id,
           userName: u.userName,
           followerCount: u.followerCount,
-          avatarUrl: u.avatarUrl || null,
+          avatarUrl: u.image ?? null,
         }));
         setFriends(mapped);
         setLoading(false);
@@ -81,6 +82,10 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
     }
   }, [selectedFriend]);
 
+  if (showAddFriend) {
+    return <AddFriend onBack={() => setShowAddFriend(false)} />;
+  }
+
   // 1) while loading / error / empty remain the same
   if (loading) return <div className="p-4 text-center">Loading…</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
@@ -93,7 +98,8 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
           </button>
           <h1 className="text-lg font-semibold text-gray-800">Following</h1>
           <button
-            onClick={() => router.push("/add-friend")}
+            // was: router.push("/add-friend")
+            onClick={() => setShowAddFriend(true)}
             className="text-xl font-bold"
           >
             +
@@ -170,7 +176,8 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
         </button>
         <h1 className="text-lg font-semibold text-gray-800">Following</h1>
         <button
-          onClick={() => router.push("/add-friend")}
+          // was router.push("/add-friend")
+          onClick={() => setShowAddFriend(true)}
           className="text-xl font-bold"
         >
           +
@@ -189,8 +196,8 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
               <Image
                 src={f.avatarUrl}
                 alt={f.userName}
-                width={5}
-                height={5}
+                width={64}
+                height={64}
                 className="w-10 h-10 rounded-full object-cover"
               />
             )}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { signIn, useSession, SessionProvider } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple, FaFacebookF } from "react-icons/fa";
+//import { FaApple, FaFacebookF } from "react-icons/fa";
 
 function LoginPageContent() {
   const { status } = useSession();
@@ -152,7 +152,7 @@ function LoginPageContent() {
           >
             <FcGoogle size={22} />
           </button>
-          <button
+          {/*  <button
             type="button"
             onClick={() => handleSocialSignIn("apple")}
             className="p-3 rounded-xl border border-gray-200 hover:bg-gray-100 transition"
@@ -165,7 +165,7 @@ function LoginPageContent() {
             className="p-3 rounded-xl border border-gray-200 hover:bg-gray-100 transition"
           >
             <FaFacebookF size={22} className="text-blue-600" />
-          </button>
+          </button> */}
         </div>
 
         <p className="text-center text-gray-500">

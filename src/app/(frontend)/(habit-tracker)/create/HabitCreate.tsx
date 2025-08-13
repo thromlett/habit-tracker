@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import { useCreateHabit } from "@/hooks/useCreateHabit";
 import { CreateHabitBody, Schedule } from "@/lib/habit";
+import { HapticButton } from "@/components/HapticButton";
 
 export default function CreatePageClient() {
   const [queryClient] = useState(() => new QueryClient());
@@ -19,7 +20,6 @@ export default function CreatePageClient() {
 function CreateHabitForm() {
   const { mutate, isPending, error, isSuccess } = useCreateHabit();
   const [name, setName] = useState("");
-  const [disposition, setDisposition] = useState<"GOOD" | "BAD">("GOOD");
   const [description, setDescription] = useState("");
   const [frequency, setFrequency] = useState<Schedule["type"]>("daysOfWeek");
   const [daysSelected, setDaysSelected] = useState<string[]>([]);
@@ -45,7 +45,7 @@ function CreateHabitForm() {
     e.preventDefault();
     const body: CreateHabitBody = {
       name,
-      disposition,
+      disposition: "GOOD", //defaulting for now
       description,
       schedule: {
         type: frequency,
@@ -181,23 +181,6 @@ function CreateHabitForm() {
               />
             </div>
           )}
-
-          {/* Disposition */}
-          <div>
-            <label className="block text-sm font-semibold mb-1">
-              Habit Type
-            </label>
-            <select
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-              value={disposition}
-              onChange={(e) => setDisposition(e.target.value as "GOOD" | "BAD")}
-              required
-            >
-              <option value="GOOD">Good Habit</option>
-              <option value="BAD">Bad Habit</option>
-            </select>
-          </div>
-
           {/* Description */}
           <div>
             <label className="block text-sm font-semibold mb-1">
@@ -213,13 +196,14 @@ function CreateHabitForm() {
             />
           </div>
 
-          <button
+          <HapticButton
             type="submit"
             disabled={isPending}
             className="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-lg shadow hover:bg-blue-700 transition"
+            haptic="impactHeavy"
           >
             {isPending ? "Adding..." : "Add Habit"}
-          </button>
+          </HapticButton>
 
           {error && <p className="text-red-500">{error.message}</p>}
           {isSuccess && <p className="text-green-600">Habit created!</p>}
