@@ -41,8 +41,8 @@ export interface HeatMapValue {
 export function toHeatMapValues(logs: LogEntry[]): HeatMapValue[] {
   const counts: Record<string, number> = {};
 
-  for (const { timeStamp, completed } of logs) {
-    if (!completed) continue;
+  for (const { timeStamp /* , completed */ } of logs) {
+    // if (!completed) continue;  fills out heatmap if not completed. Make cause a different color in future.
     const day = formatUTCDate(timeStamp);
     counts[day] = (counts[day] || 0) + 1;
   }
