@@ -43,7 +43,6 @@ export default function DashboardPage({
           tabs={["You", "Following", "Global"]}
           selectedTab={currentTab}
           onSelectTab={setCurrentTab}
-          notificationCount={69}
           onProfileClick={() => router.push("/profile")}
           onNotificationClick={() => router.push("/notifications")}
         />

@@ -20,7 +20,6 @@ export default function CreatePageClient() {
 function CreateHabitForm() {
   const { mutate, isPending, error, isSuccess } = useCreateHabit();
   const [name, setName] = useState("");
-  const [disposition, setDisposition] = useState<"GOOD" | "BAD">("GOOD");
   const [description, setDescription] = useState("");
   const [frequency, setFrequency] = useState<Schedule["type"]>("daysOfWeek");
   const [daysSelected, setDaysSelected] = useState<string[]>([]);
@@ -46,7 +45,7 @@ function CreateHabitForm() {
     e.preventDefault();
     const body: CreateHabitBody = {
       name,
-      disposition,
+      disposition: "GOOD", //defaulting for now
       description,
       schedule: {
         type: frequency,
@@ -182,23 +181,6 @@ function CreateHabitForm() {
               />
             </div>
           )}
-
-          {/* Disposition */}
-          <div>
-            <label className="block text-sm font-semibold mb-1">
-              Habit Type
-            </label>
-            <select
-              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-              value={disposition}
-              onChange={(e) => setDisposition(e.target.value as "GOOD" | "BAD")}
-              required
-            >
-              <option value="GOOD">Good Habit</option>
-              <option value="BAD">Bad Habit</option>
-            </select>
-          </div>
-
           {/* Description */}
           <div>
             <label className="block text-sm font-semibold mb-1">

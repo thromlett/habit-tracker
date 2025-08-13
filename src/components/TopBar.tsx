@@ -15,26 +15,13 @@ export default function TopBar({
   selectedTab,
   onSelectTab,
   notificationCount = 0,
-  onProfileClick,
-  onNotificationClick,
 }: TopBarProps) {
   return (
     <div className="bg-white shadow">
       {/* First row: Profile icon, title, notification */}
-      <div className="flex items-center justify-between px-4 py-3">
-        <button onClick={onProfileClick} className="text-gray-800 text-xl">
-          {/* Placeholder for profile icon */}
-          👤
-        </button>
+      <div className="flex items-center justify-center px-4 py-3">
         <h1 className="text-lg font-semibold text-gray-800">Feed</h1>
         <div className="relative">
-          <button
-            onClick={onNotificationClick}
-            className="text-gray-800 text-xl"
-          >
-            {/* Placeholder for bell icon */}
-            🔔
-          </button>
           {notificationCount > 0 && (
             <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
               {notificationCount}

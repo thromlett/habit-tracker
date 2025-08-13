@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
-// import { SessionProvider } from "next-auth/react";
-// import { useRouter } from "next/navigation";
 import React from "react";
 import Image from "next/image";
 
 import FollowingPage from "./FollowingPage";
+
+import BottomBar from "@/components/BottomBar";
 
 interface MenuItem {
   label: string;
@@ -55,20 +55,19 @@ export default function ProfilePage() {
   }, []);
 
   const menuItems: MenuItem[] = [
-    { label: "My Profile", icon: "👤", badge: null },
-    {
-      label: "Log Out",
-      icon: "🚪",
-      badge: null,
-      onClick: Logout,
-    },
-    { label: "Premium", icon: "⭐️", badge: "WIP" },
-    { label: "Achievements", icon: "🏆", badge: "WIP" },
     {
       label: "Friends",
       icon: "👥",
       badge: null,
       onClick: () => setActiveTab("following"),
+    },
+    { label: "Achievements", icon: "🏆", badge: "WIP" },
+
+    {
+      label: "Log Out",
+      icon: "🚪",
+      badge: null,
+      onClick: Logout,
     },
   ];
 
@@ -77,6 +76,7 @@ export default function ProfilePage() {
     return (
       <>
         <FollowingPage onBack={() => setActiveTab("profile")} />;
+        <BottomBar />
       </>
     );
   }
@@ -143,6 +143,7 @@ export default function ProfilePage() {
           ))}
         </ul>
       </div>
+      <BottomBar />
     </div>
   );
 }
