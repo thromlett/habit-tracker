@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   }
 
   await prisma.user.update({
-    where: { email: record.identifier },
+    where: { email: record.identifier || undefined },
     data: { emailVerified: new Date() },
   });
 
