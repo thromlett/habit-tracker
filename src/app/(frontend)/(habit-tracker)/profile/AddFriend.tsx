@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-/** 🔧 If your search route is different, update this */
 const SEARCH_ENDPOINT = "/api/profile/users/search";
 
 type RawUser = {
@@ -43,19 +43,16 @@ export default function AddFriend({ onBack }: FollowingPageProps) {
         const res = await fetch("/api/profile/follow", { method: "GET" });
         if (!res.ok) return; // non-fatal for the page
         const json = await res.json();
-        // Your GET returns: { following: [{ id, userName, image, followerCount }] }
         const map: Record<string, boolean> = {};
         (json?.following ?? []).forEach((u: RawUser) => {
           if (u?.userName) map[u.userName] = true;
         });
         setFollowing(map);
-      } catch {
-        /* ignore */
-      }
+      } catch {}
     })();
   }, []);
 
-  // 2) Search users (debounced). This should NOT hit /api/profile/follow
+  // 2) Search users (debounced)
   useEffect(() => {
     if (!debounced.trim()) {
       setResults([]);
@@ -161,7 +158,7 @@ export default function AddFriend({ onBack }: FollowingPageProps) {
       const res = await fetch("/api/profile/follow", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: userName }), // <-- per your DELETE
+        body: JSON.stringify({ name: userName }),
       });
       if (!res.ok) {
         const text = await res.text();
@@ -247,7 +244,7 @@ export default function AddFriend({ onBack }: FollowingPageProps) {
               className="flex items-center px-4 py-4 border-t last:border-b"
             >
               {u.avatarUrl ? (
-                <img
+                <Image
                   src={u.avatarUrl}
                   alt={u.userName}
                   className="w-10 h-10 rounded-full object-cover"
@@ -288,8 +285,6 @@ export default function AddFriend({ onBack }: FollowingPageProps) {
     </div>
   );
 }
-
-/* ---------- helpers ---------- */
 
 function useDebouncedValue<T>(value: T, delay = 300) {
   const [debounced, setDebounced] = useState(value);

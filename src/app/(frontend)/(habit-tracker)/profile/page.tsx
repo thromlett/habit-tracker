@@ -85,25 +85,32 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
-      <div className="flex items-center justify-between px-4 py-3 bg-white shadow">
-        <div className="flex flex-col items-start">
+      <div className="grid grid-cols-3 items-center px-4 py-3 bg-white shadow">
+        {/* left header */}
+        <div className="flex flex-col items-start justify-self-start">
           <span className="text-sm font-medium text-gray-600">Streak</span>
           <span className="text-lg font-bold text-gray-800">{streak}</span>
         </div>
-        <div className="flex flex-col items-center">
-          {/* <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center" /> */}
+
+        {/* center header */}
+        <div className="flex flex-col items-center justify-self-center">
           <Image
-            src={avatarUrl || "/components/avatars/default-avatar.jpg"}
+            src={
+              avatarUrl && avatarUrl.trim() !== "" ? avatarUrl : "/Sin_cara.png"
+            }
             alt={userName || ""}
-            width={5}
-            height={5}
+            width={64} //This is pixels not size
+            height={64}
             className="w-16 h-16 rounded-full object-cover"
+            onError={() => setAvatarUrl(null)}
           />
           <span className="mt-2 text-lg font-semibold text-gray-800">
             {userName}
           </span>
         </div>
-        <div className="flex flex-col items-end">
+
+        {/* right header */}
+        <div className="flex flex-col items-end justify-self-end text-right">
           <span className="text-sm font-medium text-gray-600">
             Days Tracking
           </span>

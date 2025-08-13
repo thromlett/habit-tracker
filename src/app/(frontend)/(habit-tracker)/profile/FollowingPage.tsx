@@ -19,12 +19,10 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  // new state: track which friend was clicked
   const [selectedFriend, setSelectedFriend] = React.useState<Friend | null>(
     null
   );
 
-  // NEW: local UI state to show the inline AddFriend flow
   const [showAddFriend, setShowAddFriend] = React.useState(false);
 
   React.useEffect(() => {
@@ -40,8 +38,7 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
           id: u.id,
           userName: u.userName,
           followerCount: u.followerCount,
-          // Preserve your field name; fallback to `image` if your API uses it
-          avatarUrl: u.avatarUrl ?? u.image ?? null,
+          avatarUrl: u.image ?? null,
         }));
         setFriends(mapped);
         setLoading(false);
@@ -85,14 +82,8 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
     }
   }, [selectedFriend]);
 
-  // 🔁 NEW: render the inline AddFriend flow
   if (showAddFriend) {
-    return (
-      <AddFriend
-        // Proper back button behavior: return to this Following list
-        onBack={() => setShowAddFriend(false)}
-      />
-    );
+    return <AddFriend onBack={() => setShowAddFriend(false)} />;
   }
 
   // 1) while loading / error / empty remain the same
@@ -185,7 +176,7 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
         </button>
         <h1 className="text-lg font-semibold text-gray-800">Following</h1>
         <button
-          // was: router.push("/add-friend")
+          // was router.push("/add-friend")
           onClick={() => setShowAddFriend(true)}
           className="text-xl font-bold"
         >
@@ -205,8 +196,8 @@ export default function FollowingPage({ onBack }: { onBack: () => void }) {
               <Image
                 src={f.avatarUrl}
                 alt={f.userName}
-                width={5}
-                height={5}
+                width={64}
+                height={64}
                 className="w-10 h-10 rounded-full object-cover"
               />
             )}
