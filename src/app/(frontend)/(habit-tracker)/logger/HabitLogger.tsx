@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import {
-  useQueryClient,
   QueryClient,
   QueryClientProvider,
   HydrationBoundary,
@@ -17,7 +16,6 @@ interface Props {
 }
 
 export default function HabitLogger({ initialHabits, initialLogs }: Props) {
-  const qc = useQueryClient();
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [queryClient] = useState(() => new QueryClient());
 
@@ -48,12 +46,42 @@ export default function HabitLogger({ initialHabits, initialLogs }: Props) {
                   onBack={() => setSelectedHabit(null)}
                   onDelete={async () => {
                     if (!selectedHabit) return;
-                    await fetch(`/api/habit/${selectedHabit.id}`, {
-                      method: "DELETE",
-                    });
-                    qc.invalidateQueries({ queryKey: ["habits"] });
-                    qc.invalidateQueries({ queryKey: ["logs"] });
+                    const id = selectedHabit.id;
+
+                    // Optimistic update for instant UI feedback
+                    queryClient.setQueryData<Habit[]>(["habits"], (old) =>
+                      (old ?? []).filter((h) => h.id !== id)
+                    );
+                    queryClient.setQueryData<HabitLog[]>(["logs"], (old) =>
+                      (old ?? []).filter((l) => l.habitId !== id)
+                    );
                     setSelectedHabit(null);
+
+                    try {
+                      const res = await fetch("/api/habit", {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ habitId: id }),
+                      });
+                      if (!res.ok) {
+                        const msg = await res.text().catch(() => "");
+                        console.error(
+                          "Failed to delete habit:",
+                          res.status,
+                          msg
+                        );
+                      }
+                    } catch (err) {
+                      console.error("Delete request failed:", err);
+                    } finally {
+                      // Ensure server truth after optimistic change
+                      await queryClient.invalidateQueries({
+                        queryKey: ["habits"],
+                      });
+                      await queryClient.invalidateQueries({
+                        queryKey: ["logs"],
+                      });
+                    }
                   }}
                 />
               ) : (
