@@ -26,7 +26,7 @@ export default function TopBar({
           {/* Placeholder for profile icon */}
           👤
         </button>
-        <h1 className="text-lg font-semibold text-gray-800">Feed</h1>
+        <h1 className="text-lg font-semibold text-gray-800">Dashboard</h1>
         <div className="relative">
           <button
             onClick={onNotificationClick}

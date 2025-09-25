@@ -9,6 +9,7 @@ import { Habit, HabitLog } from "@/lib/habit";
 import HabitList from "./HabitList";
 import HabitLogView from "./HabitLogView";
 import { SessionProvider } from "next-auth/react";
+import WipeSwitch from "@/components/WipeSwitch";
 
 interface Props {
   initialHabits: Habit[];
@@ -18,6 +19,9 @@ interface Props {
 export default function HabitLogger({ initialHabits, initialLogs }: Props) {
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const [queryClient] = useState(() => new QueryClient());
+
+  const activeKey = selectedHabit ? selectedHabit.id : "list";
+  const direction = selectedHabit ? "ltr" : "rtl"; // forward into detail, reverse back to list
 
   return (
     <SessionProvider>
@@ -36,57 +40,58 @@ export default function HabitLogger({ initialHabits, initialLogs }: Props) {
                 {selectedHabit ? selectedHabit.name : "Your Habits"}
               </h1>
 
-              {/* List or Detail View */}
-              {selectedHabit ? (
-                <HabitLogView
-                  habit={selectedHabit}
-                  logs={initialLogs.filter(
-                    (log) => log.habitId === selectedHabit.id
-                  )}
-                  onBack={() => setSelectedHabit(null)}
-                  onDelete={async () => {
-                    if (!selectedHabit) return;
-                    const id = selectedHabit.id;
+              <WipeSwitch activeKey={activeKey} direction={direction}>
+                {selectedHabit ? (
+                  <HabitLogView
+                    habit={selectedHabit}
+                    logs={initialLogs.filter(
+                      (log) => log.habitId === selectedHabit.id
+                    )}
+                    onBack={() => setSelectedHabit(null)}
+                    onDelete={async () => {
+                      if (!selectedHabit) return;
+                      const id = selectedHabit.id;
 
-                    // Optimistic update for instant UI feedback
-                    queryClient.setQueryData<Habit[]>(["habits"], (old) =>
-                      (old ?? []).filter((h) => h.id !== id)
-                    );
-                    queryClient.setQueryData<HabitLog[]>(["logs"], (old) =>
-                      (old ?? []).filter((l) => l.habitId !== id)
-                    );
-                    setSelectedHabit(null);
+                      // Optimistic update for instant UI feedback
+                      queryClient.setQueryData<Habit[]>(["habits"], (old) =>
+                        (old ?? []).filter((h) => h.id !== id)
+                      );
+                      queryClient.setQueryData<HabitLog[]>(["logs"], (old) =>
+                        (old ?? []).filter((l) => l.habitId !== id)
+                      );
+                      setSelectedHabit(null);
 
-                    try {
-                      const res = await fetch("/api/habit", {
-                        method: "DELETE",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ habitId: id }),
-                      });
-                      if (!res.ok) {
-                        const msg = await res.text().catch(() => "");
-                        console.error(
-                          "Failed to delete habit:",
-                          res.status,
-                          msg
-                        );
+                      try {
+                        const res = await fetch("/api/habit", {
+                          method: "DELETE",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ habitId: id }),
+                        });
+                        if (!res.ok) {
+                          const msg = await res.text().catch(() => "");
+                          console.error(
+                            "Failed to delete habit:",
+                            res.status,
+                            msg
+                          );
+                        }
+                      } catch (err) {
+                        console.error("Delete request failed:", err);
+                      } finally {
+                        // Ensure server truth after optimistic change
+                        await queryClient.invalidateQueries({
+                          queryKey: ["habits"],
+                        });
+                        await queryClient.invalidateQueries({
+                          queryKey: ["logs"],
+                        });
                       }
-                    } catch (err) {
-                      console.error("Delete request failed:", err);
-                    } finally {
-                      // Ensure server truth after optimistic change
-                      await queryClient.invalidateQueries({
-                        queryKey: ["habits"],
-                      });
-                      await queryClient.invalidateQueries({
-                        queryKey: ["logs"],
-                      });
-                    }
-                  }}
-                />
-              ) : (
-                <HabitList onSelect={setSelectedHabit} />
-              )}
+                    }}
+                  />
+                ) : (
+                  <HabitList onSelect={setSelectedHabit} />
+                )}
+              </WipeSwitch>
             </main>
           </div>
         </HydrationBoundary>
